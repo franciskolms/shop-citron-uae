@@ -3621,3 +3621,7 @@ details-disclosure > details {
 nav.header__inline-menu {
 	font-weight: 600;
 }
+
+.announcement-bar__message.h5 {
+	font-family: "Barlow Semi Condensed";
+}
