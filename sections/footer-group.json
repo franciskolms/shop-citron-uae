@@ -34,12 +34,17 @@
             "heading": "Quick links",
             "menu": "footer-v2-c"
           }
+        },
+        "address_BGUYqf": {
+          "type": "address",
+          "settings": {}
         }
       },
       "block_order": [
         "link_list_mRQjHg",
         "link_list_4MHjEM",
-        "link_list_M8FPaV"
+        "link_list_M8FPaV",
+        "address_BGUYqf"
       ],
       "settings": {
         "color_scheme": "scheme-4",
