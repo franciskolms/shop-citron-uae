@@ -5,6 +5,38 @@
   {% render 'header-mega-menu' %}
 {% endcomment %}
 
+<style>
+  .mega-menu-img {
+    position: absolute;
+    right: 5rem;
+    width: 30rem;
+    height: 40rem;
+    bottom: -2rem;
+    object-fit: cover;
+    padding-bottom: 3rem;
+  }
+/*Set red color to sales menu*/
+  .header__inline-menu .list-menu--inline a[href="https://citron.sa/collections/%D8%AA%D8%AE%D9%81%D9%8A%D8%B6%D8%A7%D8%AA"],  
+  .menu-drawer li a[href="https://citron.sa/collections/%D8%AA%D8%AE%D9%81%D9%8A%D8%B6%D8%A7%D8%AA"]{
+    background: #b51830; 
+    color: #ffffff !important;
+    display: inline-block;        /* Shrinks to fit content */    
+    padding: 4px 8px;             /* Optional: adds space around text */ 
+  }
+  
+  .header__inline-menu .list-menu--inline a.header__menu-item[href="/collections/back-to-school"],
+  .menu-drawer__menu a.menu-drawer__menu-item[href="/collections/back-to-school"]{
+    background: #b51830; 
+    color: #ffffff !important; 
+  }
+  .bss_parent_text{
+    right:0!important;
+  }
+  .bss_parent_text .bss_pl_label_text{
+    font-size: 11.913654603017497px;
+  } 
+</style>
+
 <nav class="header__inline-menu">
   <ul class="list-menu list-menu--inline" role="list">
     {%- for link in section.settings.menu.links -%}
@@ -34,19 +66,49 @@
                   class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
                   role="list"
                 >
+
+
+                  {%- assign has_grandchildren_started = false -%}
+
+                  {%- comment -%}
+                    First loop: Render child links WITHOUT grandchildren
+                  {%- endcomment -%}
+                  <li>
                   {%- for childlink in link.links -%}
-                    <li>
-                      <a
-                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
-                        href="{{ childlink.url }}"
-                        class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
-                        {% if childlink.current %}
-                          aria-current="page"
-                        {% endif %}
-                      >
-                        {{ childlink.title | escape }}
-                      </a>
-                      {%- if childlink.links != blank -%}
+                    {%- if childlink.links == blank -%}
+                        <a
+                          id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                          href="{{ childlink.url }}"
+                          class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
+                          {% if childlink.current %}
+                            aria-current="page"
+                          {% endif %}
+                        >
+                          {{ childlink.title | escape }}
+                        </a>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </li>
+                  
+                  {%- comment -%}
+                    Second loop: Render child links WITH grandchildren
+                  {%- endcomment -%}
+                  {%- for childlink in link.links -%}
+                    {%- if childlink.links != blank -%}
+                      {%- if has_grandchildren_started == false -%}
+                        {%- assign has_grandchildren_started = true -%}
+                      {%- endif -%}
+                      <li>
+                        <a
+                          id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                          href="{{ childlink.url }}"
+                          class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
+                          {% if childlink.current %}
+                            aria-current="page"
+                          {% endif %}
+                        >
+                          {{ childlink.title | escape }}
+                        </a>
                         <ul class="list-unstyled" role="list">
                           {%- for grandchildlink in childlink.links -%}
                             <li>
@@ -63,10 +125,18 @@
                             </li>
                           {%- endfor -%}
                         </ul>
-                      {%- endif -%}
-                    </li>
+                      </li>
+                    {%- endif -%}
                   {%- endfor -%}
                 </ul>
+
+
+                {% if link.handle == "shop" %}
+                <div class="page-width HeaderMenu-{{ link.handle }}" style="position: relative;">
+                  <img src="https://citron.ae/cdn/shop/files/Main_Page_Mobile_-_960x1080_ce055816-7160-4665-ac3a-37721250377b.png?v=1733258011&width=750" class="mega-menu-img">
+                </div>
+                {% endif %}
+
               </div>
             </details>
           </header-menu>
@@ -92,3 +162,23 @@
     {%- endfor -%}
   </ul>
 </nav>
+
+<script>
+  document.querySelectorAll('.mega-menu').forEach(menu => {
+    const summary = menu.querySelector('summary');
+    let timer;
+
+    menu.addEventListener('mouseenter', () => {
+      clearTimeout(timer);
+      menu.setAttribute('open', true);
+    });
+
+    menu.addEventListener('mouseleave', () => {
+      timer = setTimeout(() => {
+        menu.removeAttribute('open');
+      }, 100); // Delay so user can move into the dropdown
+    });
+
+    summary.addEventListener('click', e => e.preventDefault());
+  });
+</script>

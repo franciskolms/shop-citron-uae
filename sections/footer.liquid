@@ -25,6 +25,57 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  .footer__blocks-wrapper {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .footer-block {
+    width: 100%;
+    max-width: fit-content;
+  }
+
+  .footer-block__details-content {
+    font-size: 1.4rem;
+  }
+
+  .footer-title-alt {
+    font-weight: 400;
+    color: white;
+    margin-top: -0.3rem;
+  }
+
+  .footer-block--newsletter {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 1rem;
+  }
+
+  .list-social__link {
+    padding:0;
+  }
+
+  .list-social__item .icon {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .list-social {
+    column-gap: 2rem;
+    margin-top: 1rem;
+  }
+
+  .footer-address-wrap p, 
+  .footer-address-wrap a {
+    font-size: 1.3rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .footer-address-wrap a:hover {
+    color:white;
+  }
 {%- endstyle -%}
 
 <footer class="footer color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
@@ -153,7 +204,17 @@
                         {{ 'image' | placeholder_svg_tag: 'placeholder-svg placeholder' }}
                       {%- endif -%}
                     </div>
-                {%- endcase -%}
+                  {%- when "address" -%}
+                    <div class="footer-address-wrap">
+                      <div class="footer-title-alt">Citron Dubai</div>
+                      <a href="mailto:hello@citron.ae">hello@citron.ae</a>
+                      <p>Store location: Ground floor, Times Square Centre, Dubai, UAE</p>
+                      <p>Mon-Sun: 10am-10pm</p>
+                      <a href="tel:+971-4-547-78-30">+971-4-547-78-30</a>
+                    </div>
+                    {% comment %} {% render 'country-check-footer' %} {% endcomment %}
+                  {%- endcase -%}
+
               </div>
             {%- endfor -%}
           </div>
@@ -421,6 +482,10 @@
           "default": "center"
         }
       ]
+    },
+    {
+      "type": "address",
+      "name": "Citron address"
     }
   ],
   "settings": [
