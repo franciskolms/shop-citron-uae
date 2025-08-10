@@ -38,13 +38,21 @@
         "address_BGUYqf": {
           "type": "address",
           "settings": {}
+        },
+        "multimedia_YX4ENd": {
+          "type": "multimedia",
+          "settings": {
+            "title": "Sign up for our newsletter",
+            "socials_title": "Follow us"
+          }
         }
       },
       "block_order": [
         "link_list_mRQjHg",
         "link_list_4MHjEM",
         "link_list_M8FPaV",
-        "address_BGUYqf"
+        "address_BGUYqf",
+        "multimedia_YX4ENd"
       ],
       "settings": {
         "color_scheme": "scheme-4",
