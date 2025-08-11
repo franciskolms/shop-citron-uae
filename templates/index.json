@@ -88,7 +88,7 @@
         "span.icon-wrap {display: none;}",
         ".title-wrapper-with-link {justify-content: center;}",
         ".card__information {background: #f3f3f3; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;}",
-        ".card__media {border-top-left-radius: 20px; border-top-right-radius: 20px;}"
+        ".card__media,.card__inner {border-top-left-radius: 20px; border-top-right-radius: 20px;}"
       ],
       "name": "t:sections.collection-list.presets.name",
       "settings": {
