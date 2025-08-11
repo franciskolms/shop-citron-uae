@@ -50,6 +50,58 @@
         "show_text_below": false
       }
     },
+    "collection_list_jMkrD9": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_whjGdJ": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "drinkware"
+          }
+        },
+        "featured_collection_KpEiAF": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "food-containers"
+          }
+        },
+        "featured_collection_QebWQT": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "bags-kids"
+          }
+        },
+        "featured_collection_86WXGX": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "tableware-1"
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_whjGdJ",
+        "featured_collection_KpEiAF",
+        "featured_collection_QebWQT",
+        "featured_collection_86WXGX"
+      ],
+      "custom_css": [
+        "span.icon-wrap {display: none;}",
+        ".title-wrapper-with-link {justify-content: center;}"
+      ],
+      "name": "t:sections.collection-list.presets.name",
+      "settings": {
+        "title": "Popular Categories",
+        "heading_size": "h1",
+        "image_ratio": "square",
+        "columns_desktop": 4,
+        "color_scheme": "",
+        "show_view_all": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
@@ -81,6 +133,7 @@
   },
   "order": [
     "image_banner",
+    "collection_list_jMkrD9",
     "featured_collection"
   ]
 }
