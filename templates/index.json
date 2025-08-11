@@ -86,7 +86,8 @@
       ],
       "custom_css": [
         "span.icon-wrap {display: none;}",
-        ".title-wrapper-with-link {justify-content: center;}"
+        ".title-wrapper-with-link {justify-content: center;}",
+        ".card__information {background: #F3F3F3; text-align: center;}"
       ],
       "name": "t:sections.collection-list.presets.name",
       "settings": {
