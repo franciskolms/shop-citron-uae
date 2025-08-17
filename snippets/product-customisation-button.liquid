@@ -47,7 +47,12 @@
       }
     }
 </style>
-<div class="product-pers-cust-or">OR</div>
+
+{% comment %} enable_personalisation & enable_personalisation values are drillded down from product-main.liquid schema {% endcomment %}
+{% if enable_personalisation %} 
+    <div class="product-pers-cust-or">OR</div>
+{% endif %}
+
 <button type="button" class="product-form__submit button button--full-width product-customise">
     {% comment %} <span class="patch-lottie">
         <lottie-player src="{{ 'lottie-letters.json' | asset_url }}"  background="transparent"  speed="1" loop autoplay></lottie-player>

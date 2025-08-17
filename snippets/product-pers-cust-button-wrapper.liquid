@@ -10,12 +10,16 @@
 </style>
 <div class="product-pers-buttons">
 
+{% comment %} enable_personalisation & enable_personalisation values are drillded down from product-main.liquid schema {% endcomment %}
+
   {% if enable_personalisation %}
     {% render 'product-personalisation-v2-button',
     %}
   {% endif %}
 
   {% if enable_customisation %}
-    {% render 'product-customisation-button' %}
+    {% render 'product-customisation-button',
+        enable_personalisation: enable_personalisation
+    %}
   {% endif %}
 </div>
