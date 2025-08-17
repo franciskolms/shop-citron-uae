@@ -1,0 +1,49 @@
+<style>
+    button.product-personalise {
+      background: #3C0008!important;
+      font-weight: 400;
+    }
+
+    span.pers-lottie {
+      height: 2.5rem;
+      margin-right: 1rem;
+      filter: invert(1);
+      min-width: 2rem;
+    }
+
+    html[lang="ar"] span.pers-lottie {
+      margin-left: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      span.pers-lottie {
+        margin-right: .5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      span.pers-lottie {
+        margin-right: .5rem;
+      }
+
+      button.product-customise {
+        background: #3C0008!important;
+        font-weight: 400;
+        font-size: 1.4rem;
+      }
+
+      .pers-btn-text {
+        min-width: 10rem;
+      }
+    }
+</style>
+<button type="button" class="product-form__submit button button--full-width product-personalise">
+    {% comment %} <span class="pers-lottie">
+        <lottie-player src="{{ 'lottie-write.json' | asset_url }}"  background="transparent"  speed="1" loop autoplay></lottie-player>
+    </span>  {% endcomment %}
+    <span class="pers-btn-text">Personalise</span>
+</button>
+
+{% comment %} If button is rendered then render the personalisation too {% endcomment %}
+
+{% render 'product-personalisation-v4-main' %}

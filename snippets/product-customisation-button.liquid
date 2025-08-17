@@ -1,0 +1,60 @@
+<style>
+    button.product-customise {
+        background: #3C0008!important;
+        font-weight: 400;
+    }
+
+    span.patch-lottie {
+      height: 4.7rem;
+      margin-left: -2rem;
+      padding-top: 0.5rem;
+      filter: invert(1);
+    }
+
+    .product-pers-cust-or {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        background: white;
+        font-weight: 600;
+        color: black;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        width: 5.5rem;
+        height: 5.5rem;
+        text-align: center;
+        border-radius: 50%;
+        border: 2px solid #3C0008;
+    }
+
+    @media (max-width: 768px) {
+      span.patch-lottie {
+        margin-left: -3rem;
+        margin-right: -0.5rem;
+      }
+
+      button.product-customise {
+        background: #3C0008!important;
+        font-weight: 400;
+        font-size: 1.4rem;
+      }
+
+      .patch-btn-text {
+        min-width: 10rem;
+      }
+    }
+</style>
+<div class="product-pers-cust-or">OR</div>
+<button type="button" class="product-form__submit button button--full-width product-customise">
+    {% comment %} <span class="patch-lottie">
+        <lottie-player src="{{ 'lottie-letters.json' | asset_url }}"  background="transparent"  speed="1" loop autoplay></lottie-player>
+    </span> {% endcomment %}
+    <span class="patch-btn-text">Add patches</span>
+</button>
+
+{% comment %} If button is rendered then render the customisation too {% endcomment %}
+
+{% render 'product-customisation' %}
