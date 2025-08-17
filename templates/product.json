@@ -76,6 +76,15 @@
             "page": ""
           }
         },
+        "collapsible_tab_rACXYB": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Care Instructions",
+            "icon": "heart",
+            "content": "<p>{{ product.metafields.custom.product_care_instructions.value }}</p>",
+            "page": ""
+          }
+        },
         "share": {
           "type": "share",
           "settings": {
@@ -94,6 +103,7 @@
         "collapsible_tab_f3XGdm",
         "collapsible_tab_3h4ngi",
         "collapsible_tab_hWAzHH",
+        "collapsible_tab_rACXYB",
         "share"
       ],
       "settings": {
