@@ -94,6 +94,15 @@
             "page": ""
           }
         },
+        "collapsible_tab_CWwqCy": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Safety",
+            "icon": "box",
+            "content": "<p>{{ product.metafields.custom.product_safety.value }}</p>",
+            "page": ""
+          }
+        },
         "share": {
           "type": "share",
           "settings": {
@@ -114,6 +123,7 @@
         "collapsible_tab_hWAzHH",
         "collapsible_tab_rACXYB",
         "collapsible_tab_wrnXB8",
+        "collapsible_tab_CWwqCy",
         "share"
       ],
       "settings": {
