@@ -95,11 +95,10 @@
               {%- render 'loading-spinner' -%}
             </button>
 
-            {% render 'product-pers-cust-button-wrapper' %}
-
-            UKUKU
-
-            {{ enable_personalisation.value }}
+            {% render 'product-pers-cust-button-wrapper',
+              enable_personalisation: enable_personalisation,
+              enable_customisation: enable_customisation
+            %}
 
           </div>
           {%- if show_dynamic_checkout -%}

@@ -1,14 +1,21 @@
 <style>
-    .product-pers-buttons {
-      display:flex;
-      position: relative;
-    }
+  .product-pers-buttons {
+    display:flex;
+    position: relative;
+  }
 
-    .product-pers-buttons .product-form__submit {
-      margin-bottom: 0;
-    }
-  </style>
-  <div class="product-pers-buttons">
-    {% render 'product-personalisation-v2-button' %}
+  .product-pers-buttons .product-form__submit {
+    margin-bottom: 0;
+  }
+</style>
+<div class="product-pers-buttons">
+
+  {% if enable_personalisation %}
+    {% render 'product-personalisation-v2-button',
+    %}
+  {% endif %}
+
+  {% if enable_customisation %}
     {% render 'product-customisation-button' %}
-  </div>
+  {% endif %}
+</div>
