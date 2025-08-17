@@ -103,6 +103,15 @@
             "page": ""
           }
         },
+        "collapsible_tab_kfM8MN": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Warranty",
+            "icon": "lock",
+            "content": "<p>{{ product.metafields.custom.product_warranty.value }}</p>",
+            "page": ""
+          }
+        },
         "share": {
           "type": "share",
           "settings": {
@@ -124,6 +133,7 @@
         "collapsible_tab_rACXYB",
         "collapsible_tab_wrnXB8",
         "collapsible_tab_CWwqCy",
+        "collapsible_tab_kfM8MN",
         "share"
       ],
       "settings": {
