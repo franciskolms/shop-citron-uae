@@ -1,1 +1,227 @@
-{"sections":{"main":{"type":"main-product","blocks":{"vendor":{"type":"text","settings":{"text":"{{ product.vendor }}","text_style":"uppercase"}},"title":{"type":"title","settings":{}},"price":{"type":"price","settings":{}},"variant_picker":{"type":"variant_picker","settings":{"picker_type":"button","swatch_shape":"circle"}},"quantity_selector":{"type":"quantity_selector","settings":{}},"buy_buttons":{"type":"buy_buttons","settings":{"show_dynamic_checkout":true,"show_gift_card_recipient":true}},"description":{"type":"description","settings":{}},"share":{"type":"share","settings":{"share_label":"Share"}}},"block_order":["vendor","title","price","variant_picker","quantity_selector","buy_buttons","description","share"],"settings":{"enable_sticky_info":true,"color_scheme":"scheme-1","media_size":"large","constrain_to_viewport":true,"media_fit":"contain","gallery_layout":"stacked","mobile_thumbnails":"hide","media_position":"left","image_zoom":"lightbox","hide_variants":true,"enable_video_looping":false,"padding_top":36,"padding_bottom":12}},"related-products":{"type":"related-products","settings":{"heading":"You may also like","heading_size":"h2","products_to_show":4,"columns_desktop":4,"columns_mobile":"2","color_scheme":"scheme-1","image_ratio":"square","image_shape":"default","show_secondary_image":true,"show_vendor":false,"show_rating":false,"padding_top":36,"padding_bottom":28}}},"order":["main","related-products"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
+          "settings": {
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_shape": "circle"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "collapsible_tab_f3XGdm": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Personalisation",
+            "icon": "clipboard",
+            "content": "<p>{{ product.metafields.custom.product_personalise.value }}</p>",
+            "page": ""
+          }
+        },
+        "collapsible_tab_3h4ngi": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Highlights",
+            "icon": "star",
+            "content": "<p>{{ product.metafields.custom.product_highlights.value }}</p>",
+            "page": ""
+          }
+        },
+        "collapsible_tab_hWAzHH": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Materials",
+            "icon": "leather",
+            "content": "<p>{{ product.metafields.custom.product_materials.value }}</p>",
+            "page": ""
+          }
+        },
+        "collapsible_tab_rACXYB": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Care Instructions",
+            "icon": "heart",
+            "content": "<p>{{ product.metafields.custom.product_care_instructions.value }}</p>",
+            "page": ""
+          }
+        },
+        "collapsible_tab_wrnXB8": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "icon": "truck",
+            "content": "<p>DELIVERY</p><p>All our Citron orders from the website are dispatched within 1-2 working days. During high demand seasons, such as sales or back to school, our dispatch and delivery times might be extended.<br/></p><p>Our delivery times by location are approximately: </p><p>- Within UAE: 2-3 days</p><p>- Within GCC: 4-5 working days</p><p>- Rest of the world: 7-9 working day<br/></p><p>Free UAE shipping for orders of AED200 and above. </p><p>Free GCC shipping for orders of AED500 and above (excluding taxes, duties and international processing).</p><p>All international orders are shipped with DHL Express.</p><p>For other international shipping rates mentioned on the checkout page (all the rates are excluding taxes, duties, and international processing).</p><p>Dubai - Free Self Pickup<br/>Same Day Collection is available from our warehouse in Dubai! Sunday is a no collection Day. Please allow 1-2 hours after ordering to collect your order from our warehouse. If you place your order after 6pm Mon-Fri, it will be available the following day.<br/><br/><br/>RETURNS<br/><br/>ENJOY SHOPPING WITH OUR GREAT RETURN POLICY FEATURES<br/>15 Days Refund (Not applicable to personalized items)<br/>15 Days Returns (Not applicable to personalized items)<br/>Full Refunds (Not applicable to personalized items)<br/>Free Exchange (Not applicable to personalized items)<br/>Personalized Products cannot be returned/refunded.<br/>Please see full return policy <a href=\"/pages/returns-policy\" target=\"_blank\" title=\"Returns Policy\">here</a>.</p>",
+            "page": ""
+          }
+        },
+        "collapsible_tab_CWwqCy": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Safety",
+            "icon": "box",
+            "content": "<p>{{ product.metafields.custom.product_safety.value }}</p>",
+            "page": ""
+          }
+        },
+        "collapsible_tab_kfM8MN": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Warranty",
+            "icon": "lock",
+            "content": "<p>{{ product.metafields.custom.product_warranty.value }}</p>",
+            "page": ""
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share"
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "price",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "description",
+        "collapsible_tab_f3XGdm",
+        "collapsible_tab_3h4ngi",
+        "collapsible_tab_hWAzHH",
+        "collapsible_tab_rACXYB",
+        "collapsible_tab_wrnXB8",
+        "collapsible_tab_CWwqCy",
+        "collapsible_tab_kfM8MN",
+        "share"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-1",
+        "media_size": "large",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "gallery_layout": "stacked",
+        "mobile_thumbnails": "hide",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 36,
+        "padding_bottom": 12
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "image_with_text_AGe36e": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_wQqpLF": {
+          "type": "heading",
+          "settings": {
+            "heading": "SET READY PACKS",
+            "heading_size": "h1"
+          }
+        },
+        "text_eGpamW": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Discover a new way to shop! With just one click you can purchase an entire <a href=\"/collections/sets\" title=\"Sets\">set</a>.<br/></p><p>Choose from various combinations and patterns.<br/>Free personalisation available!</p>",
+            "text_style": "body"
+          }
+        },
+        "button_p99WPx": {
+          "type": "button",
+          "settings": {
+            "button_label": "Shop Now",
+            "button_link": "shopify://collections/sets",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_wQqpLF",
+        "text_eGpamW",
+        "button_p99WPx"
+      ],
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/01_7a620e01-f987-4875-af0e-53378d3617cc.png",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "text_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "scheme-2",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "main",
+    "related-products",
+    "image_with_text_AGe36e"
+  ]
+}
