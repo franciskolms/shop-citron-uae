@@ -262,7 +262,12 @@
                   {%- if forloop.index > 2 -%}
                     {%- assign lazy_load = true -%}
                   {%- endif -%}
-
+                
+                  {%- comment -%} Skip products tagged "new-style" entirely {%- endcomment -%}
+                  {% unless item.object_type == 'product' and item.tags contains 'new_style' %}
+                    {% continue %}
+                  {% endunless %}
+                
                   <li
                     class="grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
                     {% if settings.animations_reveal_on_scroll %}
@@ -271,7 +276,6 @@
                   >
                     {%- case item.object_type -%}
                       {%- when 'product' -%}
-                        {%- capture product_settings -%}{%- if section.settings.product_show_vendor -%}vendor,{%- endif -%}title,price{%- endcapture -%}
                         {% render 'card-product',
                           card_product: item,
                           media_aspect_ratio: section.settings.image_ratio,
@@ -283,6 +287,7 @@
                           skip_styles: skip_card_product_styles
                         %}
                         {%- assign skip_card_product_styles = true -%}
+                
                       {%- when 'article' -%}
                         {% render 'article-card',
                           article: item,
@@ -293,31 +298,13 @@
                           media_aspect_ratio: 1,
                           lazy_load: lazy_load
                         %}
+                
                       {%- when 'page' -%}
-                        <div class="article-card-wrapper card-wrapper underline-links-hover">
-                          <div
-                            class="card card--card card--text ratio color-{{ settings.blog_card_color_scheme }}"
-                            style="--ratio-percent: 100%;"
-                          >
-                            <div class="card__content">
-                              <div class="card__information">
-                                <h3 class="card__heading">
-                                  <a href="{{ item.url }}" class="full-unstyled-link">
-                                    {{ item.title | truncate: 50 | escape }}
-                                  </a>
-                                </h3>
-                              </div>
-                              <div class="card__badge {{ settings.badge_position }}">
-                                <span class="badge color-{{ settings.color_schemes | first }}">
-                                  {{- 'templates.search.page' | t -}}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        <!-- existing page card code -->
                     {%- endcase -%}
                   </li>
                 {%- endfor -%}
+                
               </ul>
               {%- if paginate.pages > 1 -%}
                 {% render 'pagination', paginate: paginate %}

@@ -154,6 +154,7 @@
             >
               {% assign skip_card_product_styles = false %}
               {%- for product in collection.products -%}
+                {% if product.tags contains 'new_style' %}
                 {% assign lazy_load = false %}
                 {%- if forloop.index > 2 -%}
                   {%- assign lazy_load = true -%}
@@ -179,6 +180,7 @@
                   %}
                 </li>
                 {%- assign skip_card_product_styles = true -%}
+              {% endif %}
               {%- endfor -%}
             </ul>
 
