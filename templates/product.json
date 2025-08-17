@@ -58,6 +58,24 @@
             "page": ""
           }
         },
+        "collapsible_tab_3h4ngi": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Highlights",
+            "icon": "star",
+            "content": "<p>{{ product.metafields.custom.product_highlights.value }}</p>",
+            "page": ""
+          }
+        },
+        "collapsible_tab_hWAzHH": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Materials",
+            "icon": "leather",
+            "content": "<p>{{ product.metafields.custom.product_materials.value }}</p>",
+            "page": ""
+          }
+        },
         "share": {
           "type": "share",
           "settings": {
@@ -74,6 +92,8 @@
         "buy_buttons",
         "description",
         "collapsible_tab_f3XGdm",
+        "collapsible_tab_3h4ngi",
+        "collapsible_tab_hWAzHH",
         "share"
       ],
       "settings": {
