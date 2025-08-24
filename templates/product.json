@@ -150,7 +150,7 @@
         "enable_video_looping": false,
         "padding_top": 36,
         "padding_bottom": 12,
-        "enable_personalisation": true,
+        "enable_personalisation": false,
         "enable_customisation": false
       }
     },
