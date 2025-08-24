@@ -25,6 +25,20 @@
     {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
   {%- endif -%}
 
+  {% liquid
+    if section.settings.enable_personalisation == true and product.metafields.custom.personalisation_enabled == true
+      assign personalisation_active = true
+    else
+      assign personalisation_active = false
+    endif
+  
+    if section.settings.enable_customisation == true and product.metafields.custom.customisation_enabled == true
+      assign customisation_active = true
+    else
+      assign customisation_active = false
+    endif
+  %}
+
   {%- style -%}
     .section-{{ section.id }}-padding {
       padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -485,8 +499,8 @@
                   product_form_id: product_form_id,
                   section_id: section.id,
                   show_pickup_availability: true,
-                  enable_personalisation: section.settings.enable_personalisation,
-                  enable_customisation: section.settings.enable_customisation
+                  enable_personalisation: personalisation_active,
+                  enable_customisation: customisation_active
                 -%}
                 
               {%- when 'rating' -%}
