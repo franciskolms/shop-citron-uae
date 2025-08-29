@@ -1,9 +1,10 @@
+{{ 'tingle.css' | asset_url | stylesheet_tag }}
+
 {% assign pers_img_max_height = 625 %}
 {% assign pers_metaobject = product.metafields.custom.product_personalisation_v2.value %}
 
-{{ 'tingle.css' | asset_url | stylesheet_tag }}
-
 <style>
+    {% comment %} @import url("https://fonts.googleapis.com/css2?family=Charm:wght@400;700&display=swap"); {% endcomment %}
     @import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
 
@@ -408,18 +409,18 @@
   </style>
   
   <div id="persCloseModal">
-    <div class="close-confirm-text">لن يتم تطبيق التخصيص إذا أغلقت هذه النافذة.</div> <!-- The personalisation won't be applied if you close this window. -->
+    <div class="close-confirm-text">The personalisation won't be applied<br>if you close this window.</div> <!-- The personalisation won't be applied if you close this window. -->
     <div class="close-modal-btn-wrap">
-        <button class="button button--secondary" id="confirmPersClose">نعم، إغلاق</button> <!-- Yes, close -->
-        <button class="button button--primary" id="rejectPersClose">لا، ابق هنا</button> <!-- No, stay here -->
+        <button class="button button--secondary" id="confirmPersClose">Yes, close</button> <!-- Yes, close -->
+        <button class="button button--primary" id="rejectPersClose">No, stay here</button> <!-- No, stay here -->
     </div>
   </div>
 
   <div id="confirmNoPersonalisation" class="tingle-modal" style="display: none;">
-      <div class="close-confirm-text">هل أنت متأكد أنك لا تريد التخصيص؟</div>
+      <div class="close-confirm-text">Are you sure you don't want customization?</div>
       <div class="confirm-no-pers-btn-wrap">
-        <button id="confirm-add-without" class="button button--primary" style="flex: 1;">أضف إلى السلة بدون تخصيص</button>
-        <button id="confirm-go-to-personalise" class="button product-personalise" style="flex: 1;">نعم، أريد التخصيص</button>
+        <button id="confirm-add-without" class="button button--primary" style="flex: 1;">Yes, I don't want to personalise this product</button>
+        <button id="confirm-go-to-personalise" class="button product-personalise" style="flex: 1;">No, I want to personalise this product</button>
       </div>
   </div>
   
@@ -436,7 +437,7 @@
         <span class="pers-lottie-modal">
           <lottie-player src="{{ 'lottie-write.json' | asset_url }}"  background="transparent" speed="1" loop autoplay></lottie-player>
         </span>
-        <div class="pers-top-title">تخصيص</div>
+        <div class="pers-top-title">Personalise</div>
         {% comment %} <div>{{ pers_metaobject.color_swatch_names.value }}</div> {% endcomment %}
       </div>
       <div id="persType">{{ pers_metaobject.type.value | strip }}</div>
@@ -448,7 +449,7 @@
                 <div class="char-count-wrap"><span id="charCount">0</span>/10</div>
                 <input 
                     type="text" 
-                    placeholder="أضف اسمك (بالأحرف الإنجليزية فقط)" 
+                    placeholder="Add your name" 
                     class="pers-input field__input" 
                     id="personalisationText"
                     maxlength="10" 
@@ -461,7 +462,7 @@
                     class="field__label add-free-product-label" 
                     for="personalisationText"
                 >
-                    أضف اسمك (بالأحرف الإنجليزية فقط)
+                  Add your name
                 </label>
             </div>
 
@@ -530,24 +531,6 @@
         <p class="pers-disclaimer mobile">
           {{ pers_disclaimer }}
          </p>
-
-         {% comment %} {{ product.metafields.custom.product_personalisation_v2.value.image_t.value | json }}
-        {{ product.metafields.custom.personalisation_side_distance }}
-        {{ product.metafields.custom.personalisation_text_size }}
-        {{ product.metafields.custom.personalisation_text_top_distance }}
-        {{ product.metafields.custom.personalisation_type }} {% endcomment %}
-
-        {% comment %} {% for variant in product.variants %}
-            <p>Variant: {{ variant.title }}</p>
-          
-            <script>
-              console.log("{{ variant.title }} image:", {{ variant.metafields.custom.personalisation_image.value | json }});
-            </script>
-          
-          {% endfor %}
-         <script>
-            console.log("ukuku")
-         </script> {% endcomment %}
       </product-form>
       <!-- Choose free product sample END -->
     </div>
@@ -605,7 +588,7 @@
   //
   
   var personaliseModal = new tingle.modal({
-    closeMethods: ['overlay', 'escape'],
+    closeMethods: ['overlay'],
     cssClass: ['pers-modal-wrapper'],
   });
 
@@ -632,9 +615,9 @@
   
   document.querySelector('.material-icons.close-pers').addEventListener('click',()=>{
     persConfirmationModal.open();
-  });
-
-{% comment %} personaliseModal.open(); {% endcomment %}
+  })
+  
+// personaliseModal.open();
 
 // Build an array of variants with their personalisation images and text color
 let variantData = [];
@@ -642,7 +625,7 @@ let variantData = [];
     variantData.push({
         title: "{{ variant.title }}",
         id: "{{ variant.id }}",
-        // image: "https:" + {{ variant.metafields.custom.personalisation_image.value | json }} || "",
+        image: "https:" + {{ variant.metafields.custom.personalisation_image.value | json }} || "",
         color: "{{ variant.metafields.custom.personalisation_color.value }}" || "",
       })
   {% endfor %}
@@ -669,11 +652,11 @@ let variantData = [];
       }
     }
   
-    searchString('sticker',"قم بتخصيص الملصقات بما يصل إلى 10 أحرف (أرقام وحروف فقط). باستخدام ميزة المعاينة لدينا، يمكنك تخصيص منتجك بالنص الذي تختاره ومشاهدة كيف ستبدو كتابتك الشخصية على المنتج بالضبط. يرجى الملاحظة: المنتجات التي تحتوي على ملصقات مخصصة غير قابلة للإرجاع، وسيتم تمديد وقت التسليم ليوم عمل إضافي.")
+    searchString('sticker',"Personalise stickers up  to 10 characters (numbers and letters only). With our preview feature, customise your product with text of your choice and see exactly how your personalisation will look on your product.<br>Please note: Products with personalised stickers are not returnable and will extend delivery time by 1 working day.")
   
-    searchString('laser',"قم بتخصيص المنتجات بالليزر بما يصل إلى 10 أحرف (أرقام وحروف فقط). باستخدام ميزة المعاينة لدينا، يمكنك تخصيص منتجك بالنص الذي تختاره ومشاهدة كيف ستبدو كتابتك الشخصية على المنتج بالضبط. يرجى الملاحظة: المنتجات التي تحتوي على ملصقات مخصصة غير قابلة للإرجاع، وسيتم تمديد وقت التسليم ليوم عمل إضافي.")
+    searchString('laser',"Laser Engrave up to 10 characters (numbers and letters only). With our preview feature, customise your product with text of your choice and see exactly how your personalisation will look on your product.<br>Please note: Engraved products are not returnable and will extend delivery time by 1 working day.")
     
-    searchString('embroider',"قم بتخصيص المنتجات بالخياطة بما يصل إلى 10 أحرف (أرقام وحروف فقط). باستخدام ميزة المعاينة لدينا، يمكنك تخصيص منتجك بالنص الذي تختاره ومشاهدة كيف ستبدو كتابتك الشخصية على المنتج بالضبط. يرجى الملاحظة: المنتجات التي تحتوي على ملصقات مخصصة غير قابلة للإرجاع، وسيتم تمديد وقت التسليم ليوم عمل إضافي.")
+    searchString('embroider',"Personalise your products with Embroidery up to 10 characters (numbers and letters only). With our preview feature, customise your product with text of your choice and see exactly how your personalisation will look on your product.<br>Please note: Embroidered products are not returnable and will extend delivery time by 1 working day.")
   
     document.querySelectorAll('.pers-disclaimer').forEach((box)=>{
       box.innerHTML = disclaimer

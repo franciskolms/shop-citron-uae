@@ -756,6 +756,14 @@
   </div>
 </product-info>
 
+{% if personalisation_active == true %}
+  {% render 'product-personalisation-v4-main' %}
+{% endif %}
+
+{% if customisation_active == true %}
+  {% render 'product-customisation' %}
+{% endif %}
+
 {% schema %}
 {
   "name": "t:sections.main-product.name",
