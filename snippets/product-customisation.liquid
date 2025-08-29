@@ -1218,69 +1218,6 @@ document.getElementById('addToCartBtn').addEventListener('click',()=>{
         
         return response.json();
 
-       $.ajax({
-            url: "/cart",
-            success: function (data) {
-                setTimeout(function(){
-                    var total_pro = $('table.cart-items tbody tr').length;
-                    var gift_pro = $('table.cart-items tr.cart-item.free-packing_product').length;
-                    var gift_pro_id = $('table.cart-items tr.cart-item.free-packing_product').attr('data-id');
-
-                    if(gift_pro == 1 && gift_pro_id == '40558809579587') {
-                        $.ajax({
-                        type: "POST",
-                        url: "/cart/change.js",
-                        dataType: "json",
-                        data: {
-                        id: '40558809579587',
-                        quantity: 1,
-                    },
-                    }).then((data) => {
-                        window.location = "/cart"
-                    });
-                    } else if(gift_pro == 1 && gift_pro_id == '40160598491203') {
-                        $.ajax({
-                        type: "POST",
-                        url: "/cart/change.js",
-                        dataType: "json",
-                        data: {
-                        id: '40558809579587',
-                        quantity: 0,
-                        },
-                        }).then((data) => {
-                            window.location = "/cart"
-                        });
-                    }
-                    else if(gift_pro == 1 && gift_pro_id == '40160599310403') {
-                        $.ajax({
-                            type: "POST",
-                            url: "/cart/change.js",
-                            dataType: "json",
-                            data: {
-                            id: '40558809579587',
-                            quantity: 0,
-                            },
-                            }).then((data) => {
-                                window.location = "/cart"
-                        });
-                    }
-                    else {
-                        $.ajax({
-                            type: 'POST',
-                            url: '/cart/add.js',
-                            data: {
-                            quantity: 1,
-                            id: '40558809579587'
-                            },
-                            dataType: 'json', 
-                            success: function (data) { 
-                                window.location = "/cart"  
-                            } 
-                        });
-                    }
-                },5000);
-            }
-        });
     })
     .catch((error) => {
         console.error('Error:', error);
