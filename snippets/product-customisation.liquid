@@ -706,652 +706,523 @@ img.patch-img-small.not-available {
 <script src="{{ 'tingle.min.js' | asset_url }}"></script>
 
 <script>
-//////////////////////////////////////////////////
-// Handle modal windows
-//////////////////////////////////////////////////
-var customiseModal = new tingle.modal({
-    closeMethods: ['overlay', 'escape'],
-    cssClass: ['cust-modal-wrapper'],
-});
-
-var custConfirmationModal = new tingle.modal({
-    closeMethods: ['overlay', 'escape'],
-    cssClass: ['cust-confirmation-modal-wrapper'],
-});
-
-customiseModal.setContent(document.getElementById('customiseModal'));
-custConfirmationModal.setContent(document.getElementById('customiseCloseModal'));
-
-document.querySelector('.product-customise').addEventListener('click',()=>{
-    customiseModal.open();
-});
-
-document.querySelector('#confirmCustClose').addEventListener('click',()=>{
-    custConfirmationModal.close();
-    customiseModal.close();
-});
-
-document.querySelector('#rejectCustClose').addEventListener('click',()=>{
-    custConfirmationModal.close();
-});
-
-document.querySelector('.customisation-close-btn').addEventListener('click',()=>{
-    custConfirmationModal.open();
-});
-
-//////////////////////////////////////////////////
-// Build an array of products for theme selection
-//////////////////////////////////////////////////
-
-let availableThemesArray = [
-    {% for product_theme in product.metafields.custom.product_customisation.value.product_to_customise.value %}
-        {
-            id: {{ product_theme.id }},
-            variantId: 
-            {% if product_theme.first_available_variant.id != blank %}
-                {{ product_theme.first_available_variant.id }}
-            {% else %}
-                ""
-            {% endif %},
-            available: {{ product_theme.available }},
-            handle: "{{ product_theme.handle }}",
-            title: "{{ product_theme.title }}",
-            price: {{ product_theme.price }}, // Unformatted / no  | money  filter
-            image: "", // Added later
-        },
-    {% endfor %}
-]
-
-// Create temporary array for images
-let imageArray = {{ product.metafields.custom.product_customisation.value.image.value | json }}
-
-// Add image to each product theme object
-availableThemesArray.forEach((theme, index)=>{
-    theme.image = imageArray[index];
-});
-
-//////////////////////////////////////////////////
-// Populate initial modal fields with current product theme values
-//////////////////////////////////////////////////
-let currentProduct = availableThemesArray.find(p => p.id === parseInt({{ product.id }}))
-
-// Add theme image to the DOM
-function updateDisplayedTheme(image) {
-    document.getElementById('activeThemeImage').src = image
-}
-
-updateDisplayedTheme(currentProduct.image)
-
-console.log(availableThemesArray);
-
-//////////////////////////////////////////////////
-// Build an object array of patches assigned to this product
-//////////////////////////////////////////////////
-
-let availablePatchesArray = {
-        letters: [
-            {% for collection in product.metafields.custom.product_customisation.value.letters_collections.value %}
-                {% paginate collections[collection.handle].products by 1000 %}
-                {
-                        patches: [
-                        {% for letter_patch in collections[collection.handle].products %}
-                            {
-                                title: "{{ letter_patch.title }}",
-                                id: 
-                                {% if letter_patch.first_available_variant.id != blank %}
-                                    {{ letter_patch.first_available_variant.id }}
-                                {% else %}
-                                    ""
-                                {% endif %},
-                                image: "{{ letter_patch.featured_image | img_url: '100x' }}",
-                                price: {{ letter_patch.price }},
-                                available: {{ letter_patch.available }},
-                                value: "{{ letter_patch.metafields.custom.patch_label_for_customisation }}",
-                            },
-                        {% endfor %}
-                        ],
-                        title: "{{ collection.title }}",
-                        
-                },
-                {% endpaginate %}
-            {% endfor %}
-        ],
-        icons: [
-            {% for collection in product.metafields.custom.product_customisation.value.icons_collections.value %}
-                {% paginate collections[collection.handle].products by 1000 %}
-                {
-                        patches: [
-                        {% for icon_patch in collections[collection.handle].products %}
-                            {
-                                title: "{{ icon_patch.title }}",
-                                id: 
-                                {% if icon_patch.first_available_variant.id != blank %}
-                                    {{ icon_patch.first_available_variant.id }}
-                                {% else %}
-                                    ""
-                                {% endif %},
-                                image: "{{ icon_patch.featured_image | img_url: '100x' }}",
-                                price: {{ icon_patch.price }},
-                                available: {{ icon_patch.available }},
-                            },
-                        {% endfor %}
-                        ],
-                        title: "{{ collection.title }}",
-                        
-                },
-                {% endpaginate %}
-            {% endfor %}
-        ]
+    //////////////////////////////////////////////////
+    // Modal setup (unchanged)
+    //////////////////////////////////////////////////
+    var customiseModal = new tingle.modal({
+      closeMethods: ['overlay', 'escape'],
+      cssClass: ['cust-modal-wrapper'],
+    });
+    
+    var custConfirmationModal = new tingle.modal({
+      closeMethods: ['overlay', 'escape'],
+      cssClass: ['cust-confirmation-modal-wrapper'],
+    });
+    
+    customiseModal.setContent(document.getElementById('customiseModal'));
+    custConfirmationModal.setContent(document.getElementById('customiseCloseModal'));
+    
+    document.querySelector('#confirmCustClose').addEventListener('click', () => {
+      custConfirmationModal.close();
+      customiseModal.close();
+    });
+    
+    document.querySelector('#rejectCustClose').addEventListener('click', () => {
+      custConfirmationModal.close();
+    });
+    
+    document.querySelector('.customisation-close-btn').addEventListener('click', () => {
+      custConfirmationModal.open();
+    });
+    
+    //////////////////////////////////////////////////
+    // THEME ≙ VARIANT (new): build from product variants
+    //////////////////////////////////////////////////
+    const PRODUCT_TITLE = {{ product.title | json }};
+    
+    let availableVariantsArray = [
+      {% for v in product.variants %}
+      {
+        id: {{ v.id }},
+        available: {{ v.available }},
+        variantTitle: {{ v.title | json }},
+        // price in cents
+        price: {{ v.price }},
+        // image priority: variant metafield → variant image → product image
+        image: "{% if v.metafields.custom.customisation_image != blank %}{{ v.metafields.custom.customisation_image | image_url: width: 900 }}{% elsif v.featured_image %}{{ v.featured_image | img_url: '900x' }}{% else %}{{ product.featured_image | img_url: '900x' }}{% endif %}"
+      },
+      {% endfor %}
+    ];
+    
+    function computeDisplayTitle(variant) {
+      if (!variant) return PRODUCT_TITLE;
+      return (variant.variantTitle && variant.variantTitle !== 'Default Title')
+        ? `${PRODUCT_TITLE} — ${variant.variantTitle}`
+        : PRODUCT_TITLE;
     }
-
-console.log(availablePatchesArray)
-
-//////////////////////////////////////////////////
-// Declare the initial summary object & its state with all its functions
-//////////////////////////////////////////////////
-
-let uniqueId = Math.floor(Date.now() / 1000); // Generates a unix time stamp for a unique product id
-
-// Summary object & its methods that can be called from anywhere
-
-let ProductState = {
-    theme: {},
-    patches: [],
-    stateId: uniqueId,
-    priceTotal: 0,
-    position: {
+    
+    //////////////////////////////////////////////////
+    // Patches (unchanged data build)
+    //////////////////////////////////////////////////
+    let availablePatchesArray = {
+      letters: [
+        {% for collection in product.metafields.custom.product_customisation.value.letters_collections.value %}
+        {% paginate collections[collection.handle].products by 1000 %}
+        {
+          patches: [
+            {% for letter_patch in collections[collection.handle].products %}
+            {
+              title: {{ letter_patch.title | json }},
+              id: {% if letter_patch.first_available_variant.id != blank %}{{ letter_patch.first_available_variant.id }}{% else %}""{% endif %},
+              image: "{{ letter_patch.featured_image | img_url: '100x' }}",
+              price: {{ letter_patch.price }},
+              available: {{ letter_patch.available }},
+              value: {{ letter_patch.metafields.custom.patch_label_for_customisation | json }}
+            },
+            {% endfor %}
+          ],
+          title: {{ collection.title | json }}
+        },
+        {% endpaginate %}
+        {% endfor %}
+      ],
+      icons: [
+        {% for collection in product.metafields.custom.product_customisation.value.icons_collections.value %}
+        {% paginate collections[collection.handle].products by 1000 %}
+        {
+          patches: [
+            {% for icon_patch in collections[collection.handle].products %}
+            {
+              title: {{ icon_patch.title | json }},
+              id: {% if icon_patch.first_available_variant.id != blank %}{{ icon_patch.first_available_variant.id }}{% else %}""{% endif %},
+              image: "{{ icon_patch.featured_image | img_url: '100x' }}",
+              price: {{ icon_patch.price }},
+              available: {{ icon_patch.available }}
+            },
+            {% endfor %}
+          ],
+          title: {{ collection.title | json }}
+        },
+        {% endpaginate %}
+        {% endfor %}
+      ]
+    };
+    
+    //////////////////////////////////////////////////
+    // Helpers
+    //////////////////////////////////////////////////
+    Array.prototype.remove = function (from, to) {
+      var rest = this.slice((to || from) + 1 || this.length);
+      this.length = from < 0 ? this.length + from : from;
+      return this.push.apply(this, rest);
+    };
+    
+    function insertAfter(referenceNode, newNode) {
+      referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+    }
+    
+    function updateDisplayedTheme(image) {
+      document.getElementById('activeThemeImage').src = image || "";
+    }
+    
+    function getCurrentVariantIdFromForm() {
+      // Dawn & most themes keep current variant id in the product form input[name="id"]
+      const idInput =
+        document.querySelector('form[action="/cart/add"] input[name="id"]') ||
+        document.querySelector('form[id^="product-form"] input[name="id"]') ||
+        document.querySelector('product-form form input[name="id"]');
+    
+      if (idInput && idInput.value) return Number(idInput.value);
+      return Number({{ product.selected_or_first_available_variant.id }});
+    }
+    
+    //////////////////////////////////////////////////
+    // ProductState (tweaked to use VARIANT as theme)
+    //////////////////////////////////////////////////
+    let ProductState = {
+      theme: {}, // now holds the ACTIVE VARIANT object
+      patches: [],
+      stateId: Math.floor(Date.now() / 1000),
+      position: {
         size: {{ product.metafields.custom.product_customisation.value.area_rectangle_height }},
         x: {{ product.metafields.custom.product_customisation.value.area_rectangle_x_position }},
         y: {{ product.metafields.custom.product_customisation.value.area_rectangle_y_position }}
-    },
-
-    // If no target theme is spefified, just select the selected theme
-    initTheme() {
-        this.theme = availableThemesArray.find(p => p.id === parseInt(document.querySelector('.cust-theme-img.selected').dataset.productId));
-
-        // Add the theme to the top of summary
-        document.querySelector('.summary-info-wrap').innerHTML = `
-        <div class="summary-row theme">
-            <div class="item-title">${this.theme.title}</div>
+      },
+    
+      initThemeByVariantId(variantId) {
+        this.theme = availableVariantsArray.find(v => v.id === Number(variantId)) || availableVariantsArray[0];
+    
+        // reset UI summary region
+        const summary = document.querySelector('.summary-info-wrap');
+        summary.innerHTML = `
+          <div class="summary-row theme">
+            <div class="item-title">${computeDisplayTitle(this.theme)}</div>
             <div>${this.formatPrice(this.theme.price)}</div>
-        </div>
-        `
-
-        // Add product title to modal
-        document.querySelector('.cust-product-title').textContent = this.theme.title
-
-        // Render the total price
+          </div>
+        `;
+    
+        // set modal product title and hero image
+        document.querySelector('.cust-product-title').textContent = computeDisplayTitle(this.theme);
+        updateDisplayedTheme(this.theme.image);
+    
         this.renderPriceTotal();
-
-    },
-
-    updateTheme(targetTheme) {
-        this.theme = targetTheme;
-
-        // Add the theme to the top of summary
+      },
+    
+      updateTheme(targetVariant) {
+        this.theme = targetVariant;
         document.querySelector('.summary-row.theme').innerHTML = `
-            <div class="item-title">${this.theme.title}</div>
-            <div>${this.formatPrice(this.theme.price)}</div>
-        `
-
-        // Add product title to modal
-        document.querySelector('.cust-product-title').textContent = this.theme.title
-
-    },
-
-    addPatch(targetPatch) {
-        // Add the patch to the summary object
-        this.patches.push(targetPatch);
-
-        // Render frontend
-        this.renderProductState();
-
-        // Show the info message
-        document.querySelector('.cust-info-img-bottom').style.opacity = 1
-        
-    },
-
-    removePatch(patchIndex) {
-        // Remove the patch to the summary object
-        this.patches.remove(patchIndex); // Using a helper function
-
-        // Render frontend
-        this.renderProductState();
-    },
-
-    renderProductState() {
-        // Re-render the array of imposed patches & its delete btns
-        console.log(this.patches)
-        document.getElementById('imposedPatches').innerHTML = this.patches.map((patch, index)=>`
-            <div class="imposed-patch-wrap">
-                <span 
-                    class="material-icons delete-patch-btn"
-                    data-patch-index=${index}
-                >
-                    cancel
-                </span>
-                <img 
-                    src="${patch.image}" 
-                    data-patch-index=${index}
-                    class="imposed-patch"
-                >
-            </div>
-        `).join('');
-
-        // Add/re-add the event listeners to patches after re-rendering
-        document.querySelectorAll('.imposed-patch').forEach(patch=>{
-            patch.addEventListener('click',(e)=>{
-                // this.removePatch(e.target.dataset.patchIndex)
-                document.querySelectorAll('.delete-patch-btn').forEach(deletePatchBtn =>{
-                    deletePatchBtn.classList.remove('active');
-                });
-                document.querySelectorAll('.delete-patch-btn')[e.target.dataset.patchIndex].classList.add('active')
-            });
-        });
-
-        // Add/re-add the event listeners to patch delete buttons after re-rendering
-        document.querySelectorAll('.delete-patch-btn').forEach((deletePatchBtn, index)=>{
-            deletePatchBtn.addEventListener('click',(e)=>{
-                this.removePatch(index);
-            });
-        });
-
-        //
-        // Handle summary
-        //
-
-        // Remove the patches' summary rows to make space for re-rendered ones
-        document.querySelectorAll('.summary-row.patch').forEach(row=>{
-            row.remove();
-        });
-
-        // Reverse the array to ensure the patches are rendered in the right order & render all selected patches. Need to create a copy of the patches array (spread syntax) in order to not reverse the actual array, since it is reversed for visual purposes only.
-        [...this.patches].reverse().forEach(patch=>{
-            // Render the new patch in the summary field
-            let patchElement = document.createElement("div");
-            patchElement.className = "summary-row patch";
-            patchElement.innerHTML = `
-                <div class="item-title">${patch.title}</div>
-                <div>${this.formatPrice(patch.price)}</div>
-            `
-            // document.querySelector('.summary-info-wrap').append(patchElement);
-            insertAfter(document.querySelector('.summary-row.theme'), patchElement)
-        });
-
-        // Render the total
-
-        // Remove the Total summary row to make space for re-rendered total
-        if(document.querySelector('.summary-row.total')){
-            document.querySelector('.summary-row.total').remove();
-        }
-
+          <div class="item-title">${computeDisplayTitle(this.theme)}</div>
+          <div>${this.formatPrice(this.theme.price)}</div>
+        `;
+        document.querySelector('.cust-product-title').textContent = computeDisplayTitle(this.theme);
+        updateDisplayedTheme(this.theme.image);
         this.renderPriceTotal();
-
-    },
-
-    renderPriceTotal() {
-        let totalPrice = this.theme.price;
-        this.patches.forEach(patch=>{
-            totalPrice += patch.price
+      },
+    
+      addPatch(targetPatch) {
+        this.patches.push(targetPatch);
+        this.renderProductState();
+        document.querySelector('.cust-info-img-bottom').style.opacity = 1;
+      },
+    
+      removePatch(patchIndex) {
+        this.patches.remove(patchIndex);
+        this.renderProductState();
+      },
+    
+      renderProductState() {
+        // imposed patches on image
+        document.getElementById('imposedPatches').innerHTML = this.patches.map((patch, index) => `
+          <div class="imposed-patch-wrap">
+            <span class="material-icons delete-patch-btn" data-patch-index=${index}>cancel</span>
+            <img src="${patch.image}" data-patch-index=${index} class="imposed-patch">
+          </div>
+        `).join('');
+    
+        // click → reveal delete button
+        document.querySelectorAll('.imposed-patch').forEach(patch => {
+          patch.addEventListener('click', (e) => {
+            document.querySelectorAll('.delete-patch-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.delete-patch-btn')[e.target.dataset.patchIndex].classList.add('active');
+          });
         });
-
-        let priceTotalElement = document.createElement("div");
-        priceTotalElement.className = "summary-row total";
-        priceTotalElement.innerHTML = `
-            <div class="item-title">Total</div>
-            <div>${this.formatPrice(totalPrice)}</div>
-        `
-        document.querySelector('.summary-info-wrap').append(priceTotalElement);
-    },
-
-    formatPrice(price) {
-        let regex = /^(\d+)$/;
-
+    
+        // delete buttons
+        document.querySelectorAll('.delete-patch-btn').forEach((btn, index) => {
+          btn.addEventListener('click', () => this.removePatch(index));
+        });
+    
+        // summary rows for patches
+        document.querySelectorAll('.summary-row.patch').forEach(row => row.remove());
+        [...this.patches].reverse().forEach(patch => {
+          let el = document.createElement('div');
+          el.className = 'summary-row patch';
+          el.innerHTML = `<div class="item-title">${patch.title}</div><div>${this.formatPrice(patch.price)}</div>`;
+          insertAfter(document.querySelector('.summary-row.theme'), el);
+        });
+    
+        // total
+        if (document.querySelector('.summary-row.total')) document.querySelector('.summary-row.total').remove();
+        this.renderPriceTotal();
+      },
+    
+      renderPriceTotal() {
+        let totalPrice = this.theme.price || 0;
+        this.patches.forEach(p => totalPrice += p.price);
+        let total = document.createElement('div');
+        total.className = 'summary-row total';
+        total.innerHTML = `<div class="item-title">Total</div><div>${this.formatPrice(totalPrice)}</div>`;
+        document.querySelector('.summary-info-wrap').append(total);
+      },
+    
+      formatPrice(price) {
+        // keep AED for consistency with your current UI
+        let regex = /^-?\d+$/;
         if (regex.test(price)) {
-        let result = (parseInt(price) / 100).toFixed(2);
-            return "AED" + result;
-        } else {
-            console.log('Invalid price');
+          return "AED" + (parseInt(price, 10) / 100).toFixed(2);
         }
-    },
-
-    hasSpaceForNewPatch() {
-        return this.patches.length < Number({{ product.metafields.custom.product_customisation.value.maximum_number_of_patches }})
-    }
-
-}
-
-//////////////////////////////////////////////////
-// Initialise & render the starting state of DOM
-//////////////////////////////////////////////////
-
-//
-// Build Step 1 (Theme selection)
-//
-
-// Add all connected product theme images to the DOM
-document.getElementById('custThemeOptions').innerHTML = availableThemesArray.map(product => `
-    <div class="cust-theme-opt-wrap ${product.available ? "" : "not-available"}">
-        <img src="${product.image}" data-product-id="${product.id}" class='cust-theme-img ${product.id == {{ product.id }} ? "selected" : ""}'>
-    </div>
-`).join('');
-
-// Add functionality to the newly added product theme images
-document.querySelectorAll('.cust-theme-opt-wrap').forEach((theme)=>{
-
-    theme.addEventListener('click',(e)=>{
-        let targetProduct = availableThemesArray.find(p => p.id === parseInt(e.target.dataset.productId))
-
-        console.log(targetProduct);
-        updateDisplayedTheme(e.target.src)
-
-        // Remove all selected classes
-        document.querySelectorAll('.cust-theme-opt-wrap img[data-product-id]').forEach((img)=>{
-            img.classList.remove('selected');
-        })
-
-        // Add selected class to the right thumbnail
-        document.querySelector(`.cust-theme-opt-wrap img[data-product-id="${targetProduct.id}"]`).classList.add('selected')
-
-        // Update summary & render
-        ProductState.updateTheme(targetProduct);
-    })
-})
-
-// Add event listener to Summary button
-document.getElementById('summaryBtn').addEventListener('click',()=>{
-    document.querySelector('.summary-info-wrap').classList.toggle('open');
-});
-
-// Configure and add event listener to the Continue button
-document.getElementById('nextStepBtn').addEventListener('click',()=>{
-    document.getElementById('stepOneSection').classList.remove('current');
-    document.getElementById('stepTwoSection').classList.add('current');
-
-    document.getElementById('nextStepBtn').style.display = "none";
-    document.getElementById('addToCartBtn').style.display = "inline-flex";
-});
-
-//
-// Build Step 2 (Patch selection)
-//
-
-// Configure and add event listener to the back button in Step 2
-document.getElementById('backToStepOneBtn').addEventListener('click',()=>{
-    document.getElementById('stepOneSection').classList.add('current');
-    document.getElementById('stepTwoSection').classList.remove('current');
-
-    document.getElementById('nextStepBtn').style.display = "inline-flex";
-    document.getElementById('addToCartBtn').style.display = "none";
-});
-
-// Add tab switching functionality for Letters and Icons tabs
-document.querySelector('.tab-letters').addEventListener('click',(e)=>{
-    e.target.classList.add('active');
-    document.querySelector('.tab-icons').classList.remove('active');
-    document.getElementById('allAvailableLetters').classList.add('active');
-    document.getElementById('allAvailableIcons').classList.remove('active');
-    document.querySelector('.letter-search-wrap').classList.remove('inactive');
-});
-
-document.querySelector('.tab-icons').addEventListener('click',(e)=>{
-    e.target.classList.add('active');
-    document.querySelector('.tab-letters').classList.remove('active');
-    document.getElementById('allAvailableIcons').classList.add('active');
-    document.getElementById('allAvailableLetters').classList.remove('active');
-    document.querySelector('.letter-search-wrap').classList.add('inactive');
-});
-
-// Add the available patches to the DOM (category = letter collection)
-function addAllLetterPatchesToDOM() {
-    // Reset the contents of displayed letters DOM
-    document.getElementById('allAvailableLetters').innerHTML = "";
-
-    availablePatchesArray.letters.forEach((category)=>{
-        document.getElementById('allAvailableLetters').innerHTML += Object.values(category.patches).map(patch => `
-            <div class="patch-wrapepr">
-                <img 
-                    src="${patch.image}" 
-                    data-patch-id="${patch.id}" 
-                    data-patch-type="letters"
-                    class="patch-img-small ${patch.available ? "" : "not-available"}"
-                >
-            </div>
-        `).join(''); 
-    });
-};
-
-addAllLetterPatchesToDOM();
-
-// Add the available patches to the DOM (category = icon collection)
-function addAllIconPatchesToDOM() {
-    // Reset the contents of displayed icons DOM
-    document.getElementById('allAvailableIcons').innerHTML = "";
-
-    availablePatchesArray.icons.forEach((category)=>{
-        document.getElementById('allAvailableIcons').innerHTML += Object.values(category.patches).map(patch => `
-            <div class="patch-wrapepr">
-                <img 
-                    src="${patch.image}" 
-                    data-patch-id="${patch.id}"
-                    data-patch-type="icons" 
-                    class="patch-img-small"
-                >
-            </div>
-        `).join(''); 
-    });
-};
-
-addAllIconPatchesToDOM();
-
-// Summary is rendered after all the frontend has been built to ensure all classes added by JS can be found
-ProductState.initTheme();
-
-// When Add To Cart btn is clicked
-document.getElementById('addToCartBtn').addEventListener('click',()=>{
-    document.querySelector('#addToCartBtn span').textContent = "";
-    document.querySelector('#addToCartBtn .loading-overlay__spinner').classList.remove('hidden');
-    document.getElementById('addToCartBtn').classList.add('disabled');
-    // localStorage serves as a local database. The product configuration with its unique stateID / CustomisationID is stored in localStorage and then read at the cart page.
-    let currentStorage = [];
-    // 1. Check if a localStorage item already exists
-    if(localStorage.getItem('productWithPatches')){
-        // 2. If it does, read the info and push ProductState into it.
-        currentStorage = JSON.parse(localStorage.getItem('productWithPatches'));
-        currentStorage.push(ProductState);
-        localStorage.setItem('productWithPatches',JSON.stringify(currentStorage))
-    } else {
-        // 3. If it doesn't, add to the object array the current ProductState object.
-        localStorage.setItem('productWithPatches',JSON.stringify([ProductState]))
+        return "AED0.00";
+      },
+    
+      hasSpaceForNewPatch() {
+        return this.patches.length < Number({{ product.metafields.custom.product_customisation.value.maximum_number_of_patches }});
+      }
     };
 
-    // Object which will hold correctly formatted data for Shopify
-    let addToCartData = {'items': []}
-    
-    let listOfPatches = JSON.stringify(ProductState.patches.map((patch, index) => `(${index + 1}) ${patch.title}`)).replace(/"|\[|\]/g, "")
+    // If the shopper changes variants on the PDP while the modal is open (or before opening),
+    // keep the modal’s “theme” (active variant) in sync.
+    document.addEventListener('change', (e) => {
+      const isVariantIdInput =
+        e.target.matches('form[action="/cart/add"] input[name="id"]') ||
+        e.target.matches('form[id^="product-form"] input[name="id"]') ||
+        e.target.matches('product-form form input[name="id"]');
 
-    // Add the theme first
-    addToCartData.items.push({
-        id: ProductState.theme.variantId,
+      if (!isVariantIdInput) return;
+
+      const newId = Number(e.target.value);
+      const nextVariant = availableVariantsArray.find(v => v.id === newId);
+      if (nextVariant) {
+        ProductState.updateTheme(nextVariant); // updates title, price, and image
+      }
+    });
+    
+    //////////////////////////////////////////////////
+    // UI: we start on STEP TWO (patch selection)
+    //////////////////////////////////////////////////
+    function showStepTwoOnly() {
+      const stepOne = document.getElementById('stepOneSection');
+      const stepTwo = document.getElementById('stepTwoSection');
+      stepOne && stepOne.classList.remove('current');
+      stepTwo && stepTwo.classList.add('current');
+    
+      const nextBtn = document.getElementById('nextStepBtn');
+      const addBtn  = document.getElementById('addToCartBtn');
+      if (nextBtn) nextBtn.style.display = 'none';
+      if (addBtn)  addBtn.style.display  = 'inline-flex';
+    
+      const stepNav = document.querySelector('.step-nav');
+      if (stepNav) stepNav.style.display = 'none'; // hide "Back To Theme Selection"
+    }
+    
+    //////////////////////////////////////////////////
+    // Letters / Icons tabs (unchanged)
+    //////////////////////////////////////////////////
+    document.querySelector('.tab-letters').addEventListener('click', (e) => {
+      e.target.classList.add('active');
+      document.querySelector('.tab-icons').classList.remove('active');
+      document.getElementById('allAvailableLetters').classList.add('active');
+      document.getElementById('allAvailableIcons').classList.remove('active');
+      document.querySelector('.letter-search-wrap').classList.remove('inactive');
+    });
+    
+    document.querySelector('.tab-icons').addEventListener('click', (e) => {
+      e.target.classList.add('active');
+      document.querySelector('.tab-letters').classList.remove('active');
+      document.getElementById('allAvailableIcons').classList.add('active');
+      document.getElementById('allAvailableLetters').classList.remove('active');
+      document.querySelector('.letter-search-wrap').classList.add('inactive');
+    });
+    
+    //////////////////////////////////////////////////
+    // Render available patches (unchanged)
+    //////////////////////////////////////////////////
+    function addAllLetterPatchesToDOM() {
+      const wrap = document.getElementById('allAvailableLetters');
+      wrap.innerHTML = "";
+      availablePatchesArray.letters.forEach(category => {
+        wrap.innerHTML += Object.values(category.patches).map(patch => `
+          <div class="patch-wrapepr">
+            <img
+              src="${patch.image}"
+              data-patch-id="${patch.id}"
+              data-patch-type="letters"
+              class="patch-img-small ${patch.available ? "" : "not-available"}">
+          </div>
+        `).join('');
+      });
+    }
+    
+    function addAllIconPatchesToDOM() {
+      const wrap = document.getElementById('allAvailableIcons');
+      wrap.innerHTML = "";
+      availablePatchesArray.icons.forEach(category => {
+        wrap.innerHTML += Object.values(category.patches).map(patch => `
+          <div class="patch-wrapepr">
+            <img
+              src="${patch.image}"
+              data-patch-id="${patch.id}"
+              data-patch-type="icons"
+              class="patch-img-small">
+          </div>
+        `).join('');
+      });
+    }
+    
+    addAllLetterPatchesToDOM();
+    addAllIconPatchesToDOM();
+    
+    //////////////////////////////////////////////////
+    // Summary toggle (unchanged)
+    //////////////////////////////////////////////////
+    document.getElementById('summaryBtn').addEventListener('click', () => {
+      document.querySelector('.summary-info-wrap').classList.toggle('open');
+    });
+    
+    //////////////////////////////////////////////////
+    // Add To Cart (updated: use variant id)
+    //////////////////////////////////////////////////
+    document.getElementById('addToCartBtn').addEventListener('click', () => {
+      document.querySelector('#addToCartBtn span').textContent = "";
+      document.querySelector('#addToCartBtn .loading-overlay__spinner').classList.remove('hidden');
+      document.getElementById('addToCartBtn').classList.add('disabled');
+    
+      // persist customisation locally
+      let currentStorage = [];
+      if (localStorage.getItem('productWithPatches')) {
+        currentStorage = JSON.parse(localStorage.getItem('productWithPatches'));
+        currentStorage.push(ProductState);
+        localStorage.setItem('productWithPatches', JSON.stringify(currentStorage));
+      } else {
+        localStorage.setItem('productWithPatches', JSON.stringify([ProductState]));
+      }
+    
+      // build cart payload
+      let addToCartData = { items: [] };
+      let listOfPatches = JSON.stringify(ProductState.patches.map((p, i) => `(${i + 1}) ${p.title}`)).replace(/"|\[|\]/g, "");
+    
+      // add base product (active variant)
+      addToCartData.items.push({
+        id: ProductState.theme.id, // <-- variant id
         quantity: 1,
         properties: {
-            "CustomisationID": ProductState.stateId,
-            "Patches": listOfPatches // Push the patch sequence in here and stringify e.g. "a", "b", "superman icon", "c"
+          "CustomisationID": ProductState.stateId,
+          "Patches": listOfPatches
         }
-    });
-
-    // Add all the patches
-    ProductState.patches.forEach(patch=>{
+      });
+    
+      // add patches
+      ProductState.patches.forEach(patch => {
         addToCartData.items.push({
-            id: patch.id,
-            quantity: 1,
-        })
-    });
-
-    // If the patch.id is the same in addToCartData.items, add the quantity instead of adding a new line item. If the addToCartData.items has two of the same patch.id with quantity of 1 then Shopify doesn't handle it as an additional item, but rather as a quantity of 2 for the same item. This is why we need to check for duplicates and add the quantity instead of adding a new line item.
-    addToCartData.items.forEach((item, index)=>{
-        let patchIndex = addToCartData.items.findIndex(p => p.id === item.id);
-        if(patchIndex !== index){
-            addToCartData.items[patchIndex].quantity += item.quantity;
-            addToCartData.items.splice(index, 1);
+          id: patch.id,
+          quantity: 1
+        });
+      });
+    
+      // merge duplicate patch lines into quantity
+      addToCartData.items.forEach((item, index) => {
+        let dup = addToCartData.items.findIndex(p => p.id === item.id);
+        if (dup !== index) {
+          addToCartData.items[dup].quantity += item.quantity;
+          addToCartData.items.splice(index, 1);
         }
-    });
-
-    // The code is duplicated because sometimes it doesn't execute properly. Need to fix this later to optimise the code.
-    addToCartData.items.forEach((item, index)=>{
-        let patchIndex = addToCartData.items.findIndex(p => p.id === item.id);
-        if(patchIndex !== index){
-            addToCartData.items[patchIndex].quantity += item.quantity;
-            addToCartData.items.splice(index, 1);
+      });
+      // (double-run kept as you had it, to guard edge ordering)
+      addToCartData.items.forEach((item, index) => {
+        let dup = addToCartData.items.findIndex(p => p.id === item.id);
+        if (dup !== index) {
+          addToCartData.items[dup].quantity += item.quantity;
+          addToCartData.items.splice(index, 1);
         }
-    });
-
-    // Send the add to cart data to Shopify
-    fetch(window.Shopify.routes.root + 'cart/add.js', {
+      });
+    
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(addToCartData)
-    })
-    .then(response => {
-        // User is taken to the cart page
-        window.location = "/cart"
-        
-        return response.json();
-
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-
-});
-
-//////////////////////////////////////////////////
-// Patch initialisation, selection & placement on the image
-//////////////////////////////////////////////////
-
-// Add event listeners to all patches
-
-function addPatchEventListeners() {
-    document.querySelectorAll('.patch-img-small').forEach((patch)=>{
-        patch.addEventListener('click',()=>{
-            let clickedPatch;
-    
-            // Check if the number of patches doesn't exceed 4
-            if(ProductState.hasSpaceForNewPatch()) {
-    
-                // Add the patch to productSummary
-                availablePatchesArray.letters.forEach((category)=>{
-                    if(category.patches.find(p => p.id === parseInt(patch.dataset.patchId))){
-                        clickedPatch = category.patches.find(p => p.id === parseInt(patch.dataset.patchId));
-                    };
-                });
-    
-
-                availablePatchesArray.icons.forEach((category)=>{
-                    if(category.patches.find(p => p.id === parseInt(patch.dataset.patchId))){
-                        clickedPatch = category.patches.find(p => p.id === parseInt(patch.dataset.patchId));
-                    };
-                });
-                
-                ProductState.addPatch(clickedPatch);
-            } else {
-    
-                // Show info when max amount of patches is reached
-                document.querySelector('.cust-info-img-top').style.opacity = 1
-            }
-    
-            console.log(ProductState);
-    
+      })
+        .then(response => {
+          window.location = "/cart";
+          return response.json();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
         });
     });
-}
-
-addPatchEventListeners();
-
-//////////////////////////////////////////////////
-// Letter filter/search
-//////////////////////////////////////////////////
-
-// Receive the search query on every keyup event
-
-document.getElementById('letterSearch').addEventListener('keyup',(e)=>{
-    SearchState.search(e.target.value.toLowerCase())
-});
-
-let SearchState = {
-    current: availablePatchesArray.letters, // initial state
-
-    search(searchValue){
-        // If search value is empty, reset the displayed patches
-        if(searchValue === ""){
-            return this.reset();
-        }
-        // Empty the current state
-        this.current = [];
-
-        // Split the search query into single strings &
-        // Filter availablePatchesArray.letters by each letter
-        searchValue.split('').forEach(letterString=>{
-            availablePatchesArray.letters.forEach(category =>{
-
-                // Push each filtered patch into the this.current array
-                this.current.push(category.patches.filter(letter => letter.value.toLowerCase() === letterString));
+    
+    //////////////////////////////////////////////////
+    // Patch selection: add listeners (unchanged)
+    //////////////////////////////////////////////////
+    function addPatchEventListeners() {
+      document.querySelectorAll('.patch-img-small').forEach((patch) => {
+        patch.addEventListener('click', () => {
+          let clickedPatch;
+    
+          if (ProductState.hasSpaceForNewPatch()) {
+            availablePatchesArray.letters.forEach((category) => {
+              if (category.patches.find(p => p.id === parseInt(patch.dataset.patchId))) {
+                clickedPatch = category.patches.find(p => p.id === parseInt(patch.dataset.patchId));
+              }
             });
+            availablePatchesArray.icons.forEach((category) => {
+              if (category.patches.find(p => p.id === parseInt(patch.dataset.patchId))) {
+                clickedPatch = category.patches.find(p => p.id === parseInt(patch.dataset.patchId));
+              }
+            });
+    
+            ProductState.addPatch(clickedPatch);
+          } else {
+            document.querySelector('.cust-info-img-top').style.opacity = 1;
+          }
         });
-
-        // Empty the contents of displayed letters DOM
-        document.getElementById('allAvailableLetters').innerHTML = "";
-
-        // Render the SearchState.current to DOM
-        this.current.forEach((category)=>{
-
-            // Check if the category is not empty
-            if(category.length){ 
-
-                // Render the new search results
-                category.forEach(patch => {
-                    document.getElementById('allAvailableLetters').innerHTML += `
-                    <div class="patch-wrapepr">
-                        <img 
-                            src="${patch.image}" 
-                            data-patch-id="${patch.id}" 
-                            data-patch-type="letters"
-                            class="patch-img-small ${patch.available ? "" : "not-available"}"
-                        >
-                    </div>
-                    `
-                });
-            }
+      });
+    }
+    addPatchEventListeners();
+    
+    //////////////////////////////////////////////////
+    // Letter search (unchanged)
+    //////////////////////////////////////////////////
+    let SearchState = {
+      current: availablePatchesArray.letters,
+      search(searchValue) {
+        if (searchValue === "") return this.reset();
+        this.current = [];
+        searchValue.toLowerCase().split('').forEach(letterString => {
+          availablePatchesArray.letters.forEach(category => {
+            this.current.push(category.patches.filter(letter => letter.value.toLowerCase() === letterString));
+          });
         });
-
-        // Re-add event listeners to each patch and reset the icon patches too, so the event listeners wouldn't be added twice to the icons.
-        addAllIconPatchesToDOM(); 
+    
+        const wrap = document.getElementById('allAvailableLetters');
+        wrap.innerHTML = "";
+        this.current.forEach(category => {
+          if (category.length) {
+            category.forEach(patch => {
+              wrap.innerHTML += `
+                <div class="patch-wrapepr">
+                  <img src="${patch.image}" data-patch-id="${patch.id}" data-patch-type="letters"
+                       class="patch-img-small ${patch.available ? "" : "not-available"}">
+                </div>`;
+            });
+          }
+        });
+    
+        addAllIconPatchesToDOM();
         addPatchEventListeners();
-    },
-
-    // If the search is empty then reset the displayed letter patches array
-    reset() {
+      },
+      reset() {
         this.current = availablePatchesArray.letters;
         addAllLetterPatchesToDOM();
-        addAllIconPatchesToDOM(); 
+        addAllIconPatchesToDOM();
         addPatchEventListeners();
+      }
+    };
+    
+    document.getElementById('letterSearch').addEventListener('keyup', (e) => {
+      SearchState.search(e.target.value);
+    });
+    
+    //////////////////////////////////////////////////
+    // Start flow: hook "Customise" button → open modal at step two
+    //////////////////////////////////////////////////
+    function resetForNewSession(activeVariantId) {
+      // reset state
+      ProductState.patches = [];
+      ProductState.stateId = Math.floor(Date.now() / 1000);
+    
+      // clear visuals
+      document.getElementById('imposedPatches').innerHTML = '';
+      document.querySelector('.cust-info-img-top').style.opacity = 0;
+      document.querySelector('.cust-info-img-bottom').style.opacity = 0;
+      document.querySelector('.summary-info-wrap').innerHTML = '';
+    
+      ProductState.initThemeByVariantId(activeVariantId);
+      showStepTwoOnly();
     }
-};
-
-//////////////////////////////////////////////////
-// Helpers, misc.
-//////////////////////////////////////////////////
-
-// Helper function that removes entry from an array by index
-Array.prototype.remove = function(from, to) {
-    var rest = this.slice((to || from) + 1 || this.length);
-    this.length = from < 0 ? this.length + from : from;
-    return this.push.apply(this, rest);
-};
-
-// Insert an element after a node
-function insertAfter(referenceNode, newNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
-
-</script>
+    
+    const customiseTrigger = document.querySelector('.product-customise');
+    if (customiseTrigger) {
+      customiseTrigger.addEventListener('click', () => {
+        const currentVariantId = getCurrentVariantIdFromForm();
+        resetForNewSession(currentVariantId);
+        customiseModal.open();
+      });
+    }
+    
+    // Also initialise once so the image isn’t blank before first open (uses currently selected)
+    (function bootstrapOnce() {
+      const currentVariantId = getCurrentVariantIdFromForm();
+      ProductState.initThemeByVariantId(currentVariantId);
+      showStepTwoOnly();
+    })();
+    </script>
+    

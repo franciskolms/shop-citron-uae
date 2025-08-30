@@ -762,6 +762,76 @@
         "name": "list.metaobject_reference",
         "category": "REFERENCE"
       }
+    },
+    {
+      "key": "personalisation_enabled",
+      "namespace": "custom",
+      "name": "✦ Personalisation enabled",
+      "description": "Enable or disable personalisation for the product",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
+      }
+    },
+    {
+      "key": "customisation_enabled",
+      "namespace": "custom",
+      "name": "✦ Patches (customisation) enabled",
+      "description": "Enable or disable patch customisation for the product",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
+      }
+    },
+    {
+      "key": "personalisation_text_top_distance",
+      "namespace": "custom",
+      "name": "✦ Personalisation text top distance",
+      "description": "Set text distance from the top (0-100)",
+      "type": {
+        "name": "number_decimal",
+        "category": "NUMBER"
+      }
+    },
+    {
+      "key": "personalisation_side_distance",
+      "namespace": "custom",
+      "name": "✦ Personalisation text side distance",
+      "description": "0 is centre. -100 is max left. 100 is max right.",
+      "type": {
+        "name": "number_decimal",
+        "category": "NUMBER"
+      }
+    },
+    {
+      "key": "personalisation_text_rotate",
+      "namespace": "custom",
+      "name": "✦ Personalisation text rotate",
+      "description": "Range 0 - 359. Leave blank or 0 if no rotation necessary. Enter 90 or 270 for vertical rotation.",
+      "type": {
+        "name": "number_decimal",
+        "category": "NUMBER"
+      }
+    },
+    {
+      "key": "personalisation_type",
+      "namespace": "custom",
+      "name": "✦ Personalisation type",
+      "description": "Select the type of personalisation",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "personalisation_text_size",
+      "namespace": "custom",
+      "name": "✦ Personalisation text size",
+      "description": "Set size for the personalisation text (1-20)",
+      "type": {
+        "name": "number_decimal",
+        "category": "NUMBER"
+      }
     }
   ],
   "variant": [
@@ -873,6 +943,26 @@
       "type": {
         "name": "single_line_text_field",
         "category": "TEXT"
+      }
+    },
+    {
+      "key": "personalisation_image",
+      "namespace": "custom",
+      "name": "✦ Personalisation image",
+      "description": "Image used too impose the personalisation text (please use 5:4 crop ratio)",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "personalisation_color",
+      "namespace": "custom",
+      "name": "✦ Personalisation color",
+      "description": "Choose a color for the personalisation text",
+      "type": {
+        "name": "color",
+        "category": "COLOR"
       }
     }
   ],

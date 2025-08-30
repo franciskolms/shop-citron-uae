@@ -1,0 +1,317 @@
+<style>
+    .patch-row {
+        display: grid;
+        grid-template-columns: 1fr 10fr;
+        grid-gap: 1rem;
+        align-items: center;
+        margin-top: 1rem;
+    }
+
+    .patch-row img {
+        width:100%;
+    }
+
+    {% comment %} The patch-row-to-hide class is added by Liquid if the product is categorised as a Patch (has a patch reference letter or name) {% endcomment %}
+    .patch-row-to-hide {
+        display:none;
+    }
+
+    .quantity.disabled {
+        opacity:.25;
+        pointer-events:none;
+    }
+
+    .quantity.disabled svg {
+        opacity:0;
+    }
+
+    .customised-product-cart-remove-btn {
+        display: flex;
+        align-items: center;
+        opacity: .5;
+        margin-left: 1rem;
+        padding-left: 1rem;
+        cursor: pointer;
+    }
+
+    .customised-product-cart-remove-btn.disabled {
+        opacity:.25;
+        transition:1s;
+        pointer-events:none;
+    }
+
+    .customised-product-cart-remove-btn:hover {
+        opacity: 1;
+    }
+
+    .customised-product-cart-remove-btn svg {
+        height: 1.5rem;
+        width: 1.5rem;
+    }
+
+    @media screen and (min-width: 750px) {
+        .customised-product-cart-remove-btn {
+            margin: 0.5rem 0 0 1.5rem;
+        }
+    }
+
+    .cart-item__image-containe {
+        position: relative;
+    }
+
+    .patch-imposed-wrapper {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        top: 76px;
+    }
+
+    .patch-imposed-wrapper img {
+        width:.9rem;
+    }
+
+    .product-option:has(.patch-row) dt,
+    .product-option:has(.patch-row) dd {
+        display:none;
+    }
+
+
+</style>
+<script>
+console.log("PC Cart START")
+// If there is a product in cart with summary ID, but with no cookie to read, then remove the product & all patches. Show to user that "due to session timeout, they should customise their desired product again" or smth like that.
+
+// Read the localStorage and place items in a new object array. e.g.:
+{% comment %} [
+    {
+        summaryId: "",
+        theme: "",
+        patches: []
+    },
+    {
+        summaryId: "",
+        theme: "",
+        patches: []
+    }
+] {% endcomment %}
+let currentStorage = JSON.parse(localStorage.getItem('productWithPatches'));
+
+let formattedCurrentCartItems = {}
+
+// Find the matching products in cart and localStorage
+// The query selector assumes that the first product-option is always the ID.
+document.querySelectorAll('form#cart span > .product-option:first-child dd').forEach(targetItem =>{
+    let currentItem = currentStorage.find(item => item.stateId === Number(targetItem.textContent));
+
+    if(currentItem !== undefined) { // Ignore products with personalisation
+
+        // Find the theme/product image wrapper on which to impose the patches.
+        let productThumbImgWrapper = targetItem.closest('.cart-item__details').previousElementSibling.querySelector('.cart-item__image-container');
+
+        let patchImposedWrapper = document.createElement('div');
+        patchImposedWrapper.className = "patch-imposed-wrapper";
+        productThumbImgWrapper.append(patchImposedWrapper);
+
+        [...currentItem.patches].reverse().forEach(patch=>{
+
+            // Add the patch images to the thumbnail theme/product image
+            // console.log(targetItem.closest('.cart-item__details').previousElementSibling.querySelector('.cart-item__image-container'));
+            let patchImposed = document.createElement('img');
+            patchImposed.className = "patch-imposed";
+            patchImposed.src = patch.image
+            patchImposedWrapper.style.top = `calc(1% * ${currentItem.position.y || 50})` // to ensure current carts don't break the 50 necessary. Can be deleted sometime during the night when it's safe
+            patchImposedWrapper.prepend(patchImposed);
+
+            // Place the patches after the product-option div. The array needs to be reversed in order to ensure the patches are rendered in the right order due to the insertAfter function. Need to create a copy of the patches array (spread syntax) in order to not reverse the actual array, since it is reversed for visual purposes only.
+
+            let patchInList = document.createElement("div");
+            patchInList.className = "patch-row";
+            patchInList.innerHTML = `
+                <img src="${patch.image}">
+                <div class="patch-title">${patch.title}</div>
+            `
+            insertAfter(targetItem, patchInList);
+
+        });
+
+        console.log(currentItem);
+
+        // Disable the quantity selector
+        // targetItem.closest('.cart-item').querySelector('.cart-item').classList.add('disabled');
+        targetItem.closest('.cart-item').querySelector('.quantity').classList.add('disabled');
+
+        //////////////////////////////////////////////////
+        // Handle the delete button. 
+        //////////////////////////////////////////////////
+        {% comment %} 
+        When the delete button is pressed, not only the main theme is removed, but also all the connected patches.
+        The idea is to
+        1. Fetch the current state of the cart from Shopify
+        2. Format it to an new object that can be inserted into the cart/update.js body. e.g.: { 794864053: 2, 794864233: 3 }
+        3. Run all targetItem's patches and the theme through it and remove a quantity of one if matching.
+        {% endcomment %}
+
+        // Get the current state of cart with GET /{locale}/cart.js and store it in a currentCartItems variable
+        let currentCartItems = [];
+
+        fetch(window.Shopify.routes.root + 'cart.js', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => currentCartItems = data.items);
+
+        
+        // Copy the trash svg from the original delete button, and rebuild the delete button to ensure it is fully controlled by the the code below ONLY. deepClone(true) and other cloning methods still seem to keep some event listeners from Shopify, therefore the whole element needs to be rebuilt just in case.
+
+        let trashSvg = targetItem.closest('.cart-item').querySelector('cart-remove-button svg').cloneNode(true);
+        let newDeleteEl = document.createElement("div");
+        newDeleteEl.className = "customised-product-cart-remove-btn";
+        newDeleteEl.append(trashSvg);
+        targetItem.closest('.cart-item').querySelector('cart-remove-button').replaceWith(newDeleteEl);
+
+        // Add event listener to the newly created delete button
+        newDeleteEl.addEventListener('click',()=>{
+            newDeleteEl.classList.add('disabled');
+            console.log(currentItem);
+
+            //
+            // Remove patches
+            //
+
+            // Build a new object with necessary values and formatted for Shopify's POST /{locale}/cart/update.js fetch call
+            console.log(currentCartItems);
+            let formattedCurrentCartItems = {}
+            currentCartItems.forEach(item => {
+                formattedCurrentCartItems[item.id] = item.quantity
+            });
+
+            console.log(formattedCurrentCartItems);
+            // Second, update the object quantities by removing patches contained in currentItem
+            currentItem.patches.forEach(patch=>{
+                if(formattedCurrentCartItems[patch.id] > 0){
+                    formattedCurrentCartItems[patch.id] -= 1
+                }
+            });
+
+            removePatches(formattedCurrentCartItems);
+
+            console.log(formattedCurrentCartItems);
+
+            //
+            // Remove the main product/theme
+            //
+
+            // Update the object quantities by removing the product/theme in the current item. However, due to the possibility of a product with the same ID being in the cart (e.g. personalised, non-personalised, same theme but different patches, etc.), it needs to be deleted by it's position, not by ID.
+
+            // By using stateId/CustomisationID to cross reference, find the index of the targetItem in the currentCartItems fetched from Shopify
+            function checkLineIndex(index) {
+                if(index.properties != null){
+                    return index.properties.CustomisationID === Number(targetItem.textContent);
+                }
+            };
+
+            // Updated cart data needs to be fetched again because after removing the patches the number of cart line items reduces and indexes change. It needs to be with a timeout function because it takes a little while for the db to update. If timeout is not used then the fetch function will return results without the removed patches line items.
+            setTimeout(()=>{
+                fetch(window.Shopify.routes.root + 'cart.js', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    currentCartItems = data.items
+                    console.log(currentCartItems);
+                    let lineIndex = currentCartItems.findIndex(checkLineIndex);
+                    console.log(lineIndex);
+                    removeTheme(lineIndex);
+                });
+
+                // Reload the page after the function has been executed
+                setTimeout(()=>{
+                    location.reload()
+                },1000)
+            },1000)
+        });
+    };
+});
+
+// Hide the Patches note that would go along with the product from the frontend since the patches are already displayed with an image under the product.
+if(document.querySelectorAll('.product-option').length){
+    document.querySelectorAll('.product-option').forEach(option => {
+        if(option.textContent.includes('Patches:')){
+            option.style.display = "none";
+        }
+    });
+};
+
+// Update the cart with new patch quantities with POST /{locale}/cart/change.js call (patches ONLY)
+function removePatches(formattedCurrentCartItems) {
+    fetch(window.Shopify.routes.root + 'cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({updates: formattedCurrentCartItems})
+    })
+    .then(res => {
+        return res.json();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+};
+
+// Since we're removing the theme by line property (no ID like patches), a different method needs to be used: POST /{locale}/cart/change.js (theme ONLY)
+function removeTheme(lineIndex) {
+    // Update the Shopify cart with the method below by removing the item. We assume that these themes with stateId/CustomisationID are unique, therefore, there will never be more than one item with the same stateId/CustomisationID in the cart.
+    fetch(window.Shopify.routes.root + 'cart/change.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({line: lineIndex + 1, quantity: 0}) // Shopify lines start at 1, not 0. Hence the +1.
+    })
+    .then(res => {
+        return res.json();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+// SAFETY CODE FOR CHECKING IF THE NUMBER OF PATCHES IN THE CART CORRESPOND WITH THE NUMBER OF PATCHES ADDED TO CUSTOM PRODUCTS. If different then clear the cart and reload page to avoid inconsistencies in the final checkout.
+
+if(document.querySelectorAll('.patch-row-to-hide .quantity__input').length){
+    // 1. Check the number of patches in the cart
+    let numberOfPatchesInCart = 0;
+    document.querySelectorAll('.patch-row-to-hide .quantity__input').forEach(quantity => {
+        numberOfPatchesInCart += Number(quantity.value);
+    });
+    numberOfPatchesInCart = numberOfPatchesInCart / 2 // Divided by two because drawer has the same patches
+
+    // 2. Check the number of patches that are added to custom products
+    let numberOfCustomPatches = document.querySelectorAll('.patch-title');
+
+    // 3. Compare the numbers. If they are equal then do nothing / return.
+    let isNumberOfPatchesEqual = numberOfPatchesInCart == numberOfCustomPatches.length;
+
+    // 4. If not equal, then clear the cart and reload the page
+    if(!isNumberOfPatchesEqual) {
+        console.log("CLEAR CART!");
+        fetch(window.Shopify.routes.root + 'cart/clear.js', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+        setTimeout(()=>{
+            window.location.href = "/"
+        }, 500);
+    };
+};
+
+
+//////////////////////////////////////////////////
+// Helpers, misc.
+//////////////////////////////////////////////////
+
+function insertAfter(referenceNode, newNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+console.log("PC Cart END")
+</script>
