@@ -86,7 +86,7 @@
     }
   
     .pers-top-title {
-      font-family: 'TiemposHeadline';
+      font-family: "Fjalla One", sans-serif;
       font-weight: 400;
       font-size: 2.5rem;
     }
@@ -112,7 +112,7 @@
       }
     }
   
-    #persType {
+    {% comment %} #persType {
       margin: 0 0 2.5rem 5rem;
     }
   
@@ -120,7 +120,7 @@
       #persType {
         margin: 0 0 2rem 0;
       }
-    }
+    } {% endcomment %}
   
     img#activePersImage {
       height: 100%;
@@ -434,10 +434,10 @@
     </div>
     <div class="options-pane-wrapper">
       <div class="pers-top-title-wrap">
-        <span class="pers-lottie-modal">
+        {% comment %} <span class="pers-lottie-modal">
           <lottie-player src="{{ 'lottie-write.json' | asset_url }}"  background="transparent" speed="1" loop autoplay></lottie-player>
-        </span>
-        <div class="pers-top-title">Personalise</div>
+        </span> {% endcomment %}
+        <div class="pers-top-title">{{ product.title }}</div>
         {% comment %} <div>{{ pers_metaobject.color_swatch_names.value }}</div> {% endcomment %}
       </div>
       <div id="persType">{{ pers_metaobject.type.value | strip }}</div>
@@ -519,7 +519,7 @@
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" class="add-to-cart-pers-item">
            <div class="product-form__buttons">
                 <button type="submit" name="add" class="product-form__submit button button--full-width button--primary" aria-haspopup="dialog">
-                    <span>أضف إلى السلة</span>
+                    <span>Add to cart</span>
                     <div class="loading-overlay__spinner hidden">
                     <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
                         <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
@@ -844,5 +844,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 </script>
+
 
 
