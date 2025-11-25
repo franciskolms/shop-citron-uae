@@ -20,7 +20,10 @@
         border-radius: 0;
     }
 
-    a.spf-product-personalise {
+    {% comment %} a.spf-product-personalise {
+        font-family: "Barlow Semi Condensed", sans-serif;
+        font-size:14px;
+        text-align: center;
         display: block;
         position: absolute;
         line-height: 38px;
@@ -40,412 +43,64 @@
         background:#5f0e1b;
     }
 
-    @media (max-width: 1200px) {
-        .spf-product-card:hover .spf-product-personalise {
-            {% comment %} background: blue;
-            top: calc(330px)!important; {% endcomment %}
+    a.spf-product-personalise {
+        /* ... keep your existing colors/styles ... */
+        top: auto !important; /* Ignore all the hardcoded top pixels */
+        bottom: 0; /* Stick to the bottom of the card */
+    } {% endcomment %}
+
+    /* BASE STYLES - Align to bottom, set width/color */
+    a.spf-product-personalise {
+        font-family: "Barlow Semi Condensed", sans-serif;
+        font-size:14px;
+        text-align: center;
+
+        display: block;
+        position: absolute;
+        
+        /* Anchor to the bottom regardless of image height */
+        bottom: 0; 
+        top: auto !important; 
+        
+        /* Horizontal Alignment */
+        right: 50%;
+        width: 50%;
+        
+        /* Visual Styles */
+        height: 38px;
+        line-height: 38px;
+        padding: 0 10px;
+        background: #3D000A;
+        color: white;
+        text-decoration: none;
+        z-index: 100;
+        
+        /* Animation settings (Smooth slide) */
+        transition: transform 0.3s ease-in-out, background 0.2s;
+    }
+
+    a.spf-product-personalise:hover {
+        background: #5f0e1b;
+    }
+
+    /* DESKTOP (Above 800px) - Hide and Reveal */
+    @media (min-width: 801px) {
+        a.spf-product-personalise {
+            /* Push the button down 100% of its own height to hide it */
+            transform: translateY(100%);
+        }
+
+        /* When hovering the PRODUCT CARD, slide the button up to 0 */
+        .spf-product-card:hover a.spf-product-personalise {
+            transform: translateY(0);
         }
     }
 
+    /* MOBILE (800px and below) - Always Visible */
     @media (max-width: 1024px) {
         a.spf-product-personalise {
-            top: 305.5px;
-        }
-    }
-
-    @media (max-width: 912px) {
-        a.spf-product-personalise {
-            top: 416px;
-        }
-    }
-
-    @media (max-width: 820px) {
-        a.spf-product-personalise {
-            top: 364.5px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        a.spf-product-personalise {
-            top: 335.5px;
-        }
-    }
-
-    @media (max-width: 540px) {
-        a.spf-product-personalise {
-            top: 345.5px;
-        }
-    }
-
-    @media (max-width: 460px) {
-    a.spf-product-personalise {
-        top: 282.5px;
-    }
-}
-
-@media (max-width: 459px) {
-    a.spf-product-personalise {
-        top: 282.1px;
-    }
-}
-
-@media (max-width: 458px) {
-    a.spf-product-personalise {
-        top: 281.7px;
-    }
-}
-
-@media (max-width: 457px) {
-    a.spf-product-personalise {
-        top: 281.3px;
-    }
-}
-
-@media (max-width: 456px) {
-    a.spf-product-personalise {
-        top: 280.8px;
-    }
-}
-
-@media (max-width: 455px) {
-    a.spf-product-personalise {
-        top: 280.4px;
-    }
-}
-
-@media (max-width: 454px) {
-    a.spf-product-personalise {
-        top: 280.0px;
-    }
-}
-
-@media (max-width: 453px) {
-    a.spf-product-personalise {
-        top: 279.6px;
-    }
-}
-
-@media (max-width: 452px) {
-    a.spf-product-personalise {
-        top: 279.1px;
-    }
-}
-
-@media (max-width: 451px) {
-    a.spf-product-personalise {
-        top: 278.7px;
-    }
-}
-
-@media (max-width: 450px) {
-    a.spf-product-personalise {
-        top: 278.2px;
-    }
-}
-
-@media (max-width: 449px) {
-    a.spf-product-personalise {
-        top: 277.8px;
-    }
-}
-
-@media (max-width: 448px) {
-    a.spf-product-personalise {
-        top: 277.3px;
-    }
-}
-
-@media (max-width: 447px) {
-    a.spf-product-personalise {
-        top: 276.9px;
-    }
-}
-
-@media (max-width: 446px) {
-    a.spf-product-personalise {
-        top: 276.4px;
-    }
-}
-
-@media (max-width: 445px) {
-    a.spf-product-personalise {
-        top: 275.9px;
-    }
-}
-
-@media (max-width: 444px) {
-    a.spf-product-personalise {
-        top: 275.4px;
-    }
-}
-
-@media (max-width: 443px) {
-    a.spf-product-personalise {
-        top: 274.9px;
-    }
-}
-
-@media (max-width: 442px) {
-    a.spf-product-personalise {
-        top: 274.4px;
-    }
-}
-
-@media (max-width: 441px) {
-    a.spf-product-personalise {
-        top: 273.9px;
-    }
-}
-
-@media (max-width: 440px) {
-    a.spf-product-personalise {
-        top: 273.4px;
-    }
-}
-
-@media (max-width: 439px) {
-    a.spf-product-personalise {
-        top: 272.9px;
-    }
-}
-
-@media (max-width: 438px) {
-    a.spf-product-personalise {
-        top: 272.4px;
-    }
-}
-
-@media (max-width: 437px) {
-    a.spf-product-personalise {
-        top: 271.9px;
-    }
-}
-
-@media (max-width: 436px) {
-    a.spf-product-personalise {
-        top: 271.3px;
-    }
-}
-
-@media (max-width: 435px) {
-    a.spf-product-personalise {
-        top: 270.8px;
-    }
-}
-
-@media (max-width: 434px) {
-    a.spf-product-personalise {
-        top: 270.2px;
-    }
-}
-
-@media (max-width: 433px) {
-    a.spf-product-personalise {
-        top: 269.7px;
-    }
-}
-
-@media (max-width: 432px) {
-    a.spf-product-personalise {
-        top: 269.1px;
-    }
-}
-
-@media (max-width: 431px) {
-    a.spf-product-personalise {
-        top: 268.6px;
-    }
-}
-
-@media (max-width: 429px) {
-    a.spf-product-personalise {
-        top: 267.4px;
-    }
-}
-
-@media (max-width: 428px) {
-    a.spf-product-personalise {
-        top: 266.9px;
-    }
-}
-
-@media (max-width: 427px) {
-    a.spf-product-personalise {
-        top: 266.3px;
-    }
-}
-
-@media (max-width: 426px) {
-    a.spf-product-personalise {
-        top: 265.7px;
-    }
-}
-
-@media (max-width: 425px) {
-    a.spf-product-personalise {
-        top: 265.1px;
-    }
-}
-
-@media (max-width: 424px) {
-    a.spf-product-personalise {
-        top: 264.5px;
-    }
-}
-
-@media (max-width: 423px) {
-    a.spf-product-personalise {
-        top: 263.9px;
-    }
-}
-
-@media (max-width: 422px) {
-    a.spf-product-personalise {
-        top: 263.3px;
-    }
-}
-
-@media (max-width: 421px) {
-    a.spf-product-personalise {
-        top: 262.6px;
-    }
-}
-
-@media (max-width: 420px) {
-    a.spf-product-personalise {
-        top: 262.0px;
-    }
-}
-
-@media (max-width: 419px) {
-    a.spf-product-personalise {
-        top: 261.4px;
-    }
-}
-
-@media (max-width: 418px) {
-    a.spf-product-personalise {
-        top: 260.7px;
-    }
-}
-
-@media (max-width: 417px) {
-    a.spf-product-personalise {
-        top: 260.1px;
-    }
-}
-
-@media (max-width: 415px) {
-    a.spf-product-personalise {
-        top: 258.8px;
-    }
-}
-
-@media (max-width: 413px) {
-    a.spf-product-personalise {
-        top: 257.5px;
-    }
-}
-
-@media (max-width: 411px) {
-    a.spf-product-personalise {
-        top: 256.1px;
-    }
-}
-
-@media (max-width: 410px) {
-    a.spf-product-personalise {
-        top: 255.4px;
-    }
-}
-
-@media (max-width: 409px) {
-    a.spf-product-personalise {
-        top: 254.7px;
-    }
-}
-
-@media (max-width: 407px) {
-    a.spf-product-personalise {
-        top: 253.3px;
-    }
-}
-
-@media (max-width: 405px) {
-    a.spf-product-personalise {
-        top: 251.9px;
-    }
-}
-
-@media (max-width: 403px) {
-    a.spf-product-personalise {
-        top: 250.5px;
-    }
-}
-
-@media (max-width: 401px) {
-    a.spf-product-personalise {
-        top: 249.0px;
-    }
-}
-
-    @media (max-width: 400px) {
-        a.spf-product-personalise {
-            top: 249px;
-        }
-    }
-
-    @media (max-width: 398px) {
-        a.spf-product-personalise {
-            top: 247px;
-        }
-    }
-
-    @media (max-width: 396px) {
-        a.spf-product-personalise {
-            top: 245px;
-        }
-    }
-
-    @media (max-width: 394px) {
-        a.spf-product-personalise {
-            top: 243px;
-        }
-    }
-
-    @media (max-width: 392px) {
-        a.spf-product-personalise {
-            top: 241.5px;
-        }
-    }
-
-    @media (max-width: 390px) {
-        a.spf-product-personalise {
-            top: 240.5px;
-        }
-    }
-
-    @media (max-width: 375px) {
-        a.spf-product-personalise {
-            top: 230px;
-        }
-    }
-
-    @media (max-width: 375px) {
-        a.spf-product-personalise {
-            top: 220px;
-        }
-    }
-
-    @media (max-width: 344px) {
-        a.spf-product-personalise {
-            top: 208.5px;
-        }
-    }
-
-    @media (min-width: 400px) {
-        .spf-product-card:hover .spf-product-personalise {
-            top: 333px;
+            /* Keep button at natural position (visible) */
+            transform: translateY(0);
         }
     }
 
@@ -605,7 +260,7 @@
           </select>
             <button translatable {% unless product.available %}disabled{% endunless %} type="submit" class="spf-product__form-btn-addtocart" data-available="{{translation.product.add_to_cart | default: "Add to cart"}}" data-soldout="{{translation.product.sold_out | default: "Sold out"}}" data-unavailable="{{translation.product.unavailable | default: "Unavailable"}}"><span>{% if product.available %}{{translation.product.add_to_cart | default: "Add to cart"}}{% else %}{{translation.product.sold_out | default: "Sold out"}}{% endif %}</span></button>
         </form>
-        <a href="{{ product.url }}{{ variant_url }}" class="spf-product-personalise">تخصيص</a>
+        <a href="{{ product.url }}{{ variant_url }}" class="spf-product-personalise">Personalize</a>
         {% endunless %}
          
       </div>

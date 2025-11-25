@@ -197,6 +197,76 @@
   {%- endif -%}
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let filterUpdated = false;
+    let manualClick = false;
+
+    const updatePersonaliseButton = (card) => {
+      const selectedSwatch = card.querySelector('.spf-product__swatch.is-selected');
+      const personaliseBtn = card.querySelector('.spf-product-personalise');
+
+      if (selectedSwatch && personaliseBtn) {
+        const isSoldOut = selectedSwatch.classList.contains('soldout');
+
+        personaliseBtn.setAttribute('aria-disabled', isSoldOut);
+        personaliseBtn.classList.toggle('disabled', isSoldOut);
+        personaliseBtn.style.pointerEvents = isSoldOut ? 'none' : '';
+        personaliseBtn.style.opacity = isSoldOut ? '0.5' : '1';
+      }
+    };
+
+    const moveSelectedSwatchToTop = () => {
+      if (!filterUpdated) return;
+
+      document.querySelectorAll('.spf-product-card').forEach(card => {
+        const swatchContainer = card.querySelector('.spf-product__swatchs');
+        if (!swatchContainer) return;
+
+        const selectedSwatch = swatchContainer.querySelector('.spf-product__swatch.is-selected');
+        if (selectedSwatch && selectedSwatch !== swatchContainer.firstElementChild) {
+          swatchContainer.insertBefore(selectedSwatch, swatchContainer.firstElementChild);
+        }
+
+        updatePersonaliseButton(card); // ✅ Update button on swatch update
+      });
+
+      filterUpdated = false;
+    };
+
+    // ✅ Initial check on page load
+    document.querySelectorAll('.spf-product-card').forEach(card => {
+      updatePersonaliseButton(card);
+    });
+
+    // 👀 Observer for filter-driven DOM changes
+    const filterObserver = new MutationObserver(() => {
+      if (!manualClick) {
+        filterUpdated = true;
+        moveSelectedSwatchToTop();
+      }
+    });
+
+    filterObserver.observe(document.body, { childList: true, subtree: true });
+
+    // 🖱 Manual swatch interaction
+    document.body.addEventListener('mousedown', (event) => {
+      if (event.target.closest('.spf-product__swatch')) {
+        manualClick = true;
+      }
+    });
+
+    document.body.addEventListener('mouseup', () => {
+      setTimeout(() => {
+        manualClick = false;
+        document.querySelectorAll('.spf-product-card').forEach(card => {
+          updatePersonaliseButton(card);
+        });
+      }, 300);
+    });
+  });
+</script>
+
 {% schema %}
 {
   "name": "t:sections.main-collection-product-grid.name",

@@ -3625,3 +3625,97 @@ nav.header__inline-menu {
 .announcement-bar__message.h5 {
 	font-family: "Barlow Semi Condensed";
 }
+
+/* SAUDI ARABIA NEW THEME ADJUSTMENTS */
+
+nav.header__inline-menu li span {
+	font-family: Prompt, sans-serif;
+	font-weight: 500;
+}
+
+a[href="/cart"].header__icon.header__icon--cart.link.focus-inset {
+	margin-right: 0.5rem;
+}
+
+.spf-product-card.spf-product-card__right .spf-product__swatchs {
+	justify-content: flex-start;
+}
+
+/* Search styles */
+
+.gl-card-title a {
+	color: black !important;
+}
+
+.gl-fullscreen-layer .gl-card-thumbnail img {
+	object-fit: cover !important;
+}
+
+.gl-card-price {
+	font-weight: 400 !important;
+}
+
+/* FBP Fast Bundle Styles */
+
+.rbr-sbap_name-and-price {
+	padding-right: 2rem;
+}
+
+.card--media {
+	border-radius: 1rem !important;
+}
+
+.card__media img {
+	border-top-right-radius: 1rem;
+	border-top-left-radius: 1rem;
+}
+
+.rbr-sbap_variants {
+	display: none;
+}
+
+/* Mobile footer from block list to 3 columns */
+
+@media (max-width: 768px) {
+	.footer__blocks-wrapper.grid {
+		display: grid !important;
+		grid-template-columns: 1fr 1fr 1fr !important;
+	}
+
+	.footer-block.grid__item {
+		margin: 0 !important;
+	}
+}
+
+.footer-block__details-content li {
+	margin-right: 0 !important;
+}
+
+@media (max-width: 768px) {
+	.collection-hero__description.rte {
+		display: none;
+	}
+}
+
+button[data-essential-upsell-element="add-to-cart-button"] {
+	display: none !important;
+}
+
+/* Fallback offset (matches min announcement height); JS will override this */
+:root {
+	--sticky-header-offset: 3.8rem;
+}
+
+/* Keep the announcement bar stuck at the very top */
+.announcement-bar-section {
+	position: sticky;
+	top: 0;
+	z-index: 60; /* above header section; Dawn uses low single digits by default */
+}
+
+/* Force the header to sit directly under the bar when visible */
+.section-header.shopify-section-header-sticky:not(.shopify-section-header-hidden) {
+	top: var(--sticky-header-offset) !important;
+}
+
+/* (Header hide-on-scroll state remains handled by Dawn) */
